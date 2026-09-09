@@ -476,16 +476,45 @@ table.tt .desc {
   line-height: 1.35;
 }
 
-/* -------------------------------------------- timetable (mobile day list) */
-.tt-list { display: none; }
-.tt-day { margin-bottom: 1rem; }
-.tt-day h3 {
-  margin: 0 0 0.4rem;
-  font-size: 0.8rem;
+/* -------------------------------- timetable (mobile: 1 Tag mit Tag-Wahl) */
+.tt-mobile { display: none; }
+.tt-tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 0.9rem;
+}
+.tt-tab {
+  flex: 1;
+  padding: 0.5rem 0;
+  font: inherit;
+  font-size: 0.9rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-faint);
+  color: var(--text-soft);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.tt-tab.today { border-color: var(--accent); color: var(--accent); }
+.tt-tab.active {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+}
+.tt-dayname {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.tt-heute {
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  vertical-align: 0.08em;
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 .tt-none {
   margin: 0;
@@ -598,7 +627,7 @@ table.tt .desc {
   h1 { font-size: 1.35rem; }
 
   .grid-wrap { display: none; }
-  .tt-list { display: block; }
+  .tt-mobile { display: block; }
 
   .crow { flex-wrap: wrap; gap: 0.12rem 0.7rem; padding-bottom: 0.55rem; }
   .crow-main { flex-basis: 100%; padding-bottom: 0.1rem; }

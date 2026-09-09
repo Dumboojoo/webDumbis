@@ -402,14 +402,65 @@ function renderStudent(nr) {
   if (!s) return notFound("schueler", "Schüler/innen", "Unbekannte Schülernummer.");
   const maxP = lastUsedPeriod(s.timetable);
   const grp = groupLabel(s.klasse);
+  const today = todayDayIndex();
+
   view.innerHTML =
     backlink("schueler", "Schüler/innen") +
     `<h1>${esc(s.name)}</h1>` +
     `<p class="sub">${esc(cur.info.label)} · Nr. ${esc(s.nr)}` +
     (grp ? ` · ${esc(grp)}` : "") +
     ` · <a href="${L("gemeinsam", s.nr)}">gemeinsame Kurse suchen</a></p>` +
+    // Desktop: ganze Woche als Raster
     `<div class="grid-wrap">${timetableTable(s, maxP)}</div>` +
-    `<div class="tt-list">${timetableList(s, maxP)}</div>`;
+    // Handy: ein Tag, per Tab wählbar (Start: heute)
+    `<div class="tt-mobile">` +
+    `<div class="tt-tabs" role="tablist">` +
+    DAYS.map((d, i) =>
+      `<button type="button" class="tt-tab${i === today ? " today" : ""}" ` +
+      `data-day="${i}" role="tab" aria-selected="false">${d}</button>`).join("") +
+    `</div><div class="tt-day-view" id="ttDayView"></div></div>`;
+
+  const tabs = [...view.querySelectorAll(".tt-tab")];
+  const dv = document.getElementById("ttDayView");
+  const show = (i) => {
+    tabs.forEach((t, j) => {
+      t.classList.toggle("active", j === i);
+      t.setAttribute("aria-selected", j === i ? "true" : "false");
+    });
+    dv.innerHTML = dayViewHtml(s, i, maxP, today);
+  };
+  tabs.forEach((t, i) => t.addEventListener("click", () => show(i)));
+  show(today);
+}
+
+function todayDayIndex() {
+  const d = new Date().getDay();          // 0 = So … 6 = Sa
+  return d >= 1 && d <= 5 ? d - 1 : 0;    // am Wochenende: Montag
+}
+
+function dayViewHtml(s, di, maxP, today) {
+  const d = DAYS[di];
+  const head = `<h3 class="tt-dayname">${DAY_LABELS[d]}` +
+    (di === today ? ` <span class="tt-heute">heute</span>` : "") + `</h3>`;
+  const blocks = dayBlocks(s.timetable[d] || [], maxP);
+  if (!blocks.length) return head + `<p class="tt-none">unterrichtsfrei</p>`;
+
+  const items = blocks.map((b) => {
+    const when = b.from === b.to ? `${b.from}.` : `${b.from}.–${b.to}.`;
+    if (!b.cell) {
+      return `<li class="tt-row tt-row-free"><span class="tt-when">${when}</span>` +
+        `<span class="tt-what">frei</span></li>`;
+    }
+    const info = parseLabel(b.cell.label, b.cell.code);
+    const code = cur.byCode.has(b.cell.code)
+      ? `<a class="code" href="${L("k", b.cell.code)}">${esc(info.code)}</a>`
+      : `<span class="code">${esc(info.code)}</span>`;
+    return `<li class="tt-row"><span class="tt-when">${when}</span><span class="tt-what">` +
+      `${code}${info.desc ? ` <span class="tt-desc">${esc(info.desc)}</span>` : ""}` +
+      `${b.cell.teacher ? ` <span class="tt-teacher">· ${esc(b.cell.teacher)}</span>` : ""}` +
+      `</span></li>`;
+  }).join("");
+  return head + `<ul class="tt-rows">${items}</ul>`;
 }
 
 function timetableTable(s, maxP) {
@@ -422,31 +473,6 @@ function timetableTable(s, maxP) {
   }
   return `<table class="tt"><thead><tr><th><span class="vh">Stunde</span></th>${head}</tr></thead>` +
     `<tbody>${rows}</tbody></table>`;
-}
-
-function timetableList(s, maxP) {
-  return DAYS.map((d) => {
-    const blocks = dayBlocks(s.timetable[d] || [], maxP);
-    if (!blocks.length) {
-      return `<div class="tt-day"><h3>${DAY_LABELS[d]}</h3><p class="tt-none">unterrichtsfrei</p></div>`;
-    }
-    const items = blocks.map((b) => {
-      const when = b.from === b.to ? `${b.from}.` : `${b.from}.–${b.to}.`;
-      if (!b.cell) {
-        return `<li class="tt-row tt-row-free"><span class="tt-when">${when}</span>` +
-          `<span class="tt-what">frei</span></li>`;
-      }
-      const info = parseLabel(b.cell.label, b.cell.code);
-      const code = cur.byCode.has(b.cell.code)
-        ? `<a class="code" href="${L("k", b.cell.code)}">${esc(info.code)}</a>`
-        : `<span class="code">${esc(info.code)}</span>`;
-      return `<li class="tt-row"><span class="tt-when">${when}</span><span class="tt-what">` +
-        `${code}${info.desc ? ` <span class="tt-desc">${esc(info.desc)}</span>` : ""}` +
-        `${b.cell.teacher ? ` <span class="tt-teacher">· ${esc(b.cell.teacher)}</span>` : ""}` +
-        `</span></li>`;
-    }).join("");
-    return `<div class="tt-day"><h3>${DAY_LABELS[d]}</h3><ul class="tt-rows">${items}</ul></div>`;
-  }).join("");
 }
 
 function cellHtml(c) {
