@@ -1,6 +1,7 @@
 {
   "_comment": "Lehrkräfte korrigieren/nachtragen, wenn das Schul-PDF falsch ist oder eine Lehrkraft fehlt. Pro Kurscode entweder \"Frau Nachname\" (nur der Name in der Kursliste) oder {\"teacher\": \"Frau Nachname\", \"abbr\": \"Nam\"} (auch das Kürzel in den Stundenplan-Zellen ersetzen). Leerer Name = Kurs bleibt 'ohne Lehrkraft'.",
   "k1": {
+    "d2": { "teacher": "Frau Mörk", "abbr": "Mör" },
     "d3": { "teacher": "Frau Moser", "abbr": "Mos" }
   },
   "k2": {
