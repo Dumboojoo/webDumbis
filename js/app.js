@@ -94,14 +94,20 @@ function groupLabel(g) {
 const L = (...seg) => "#/" + [cohortId, ...seg.filter((x) => x != null)].join("/");
 const cohortInfo = (id) => meta.cohorts.find((c) => c.id === id);
 
-/* 🎀 Pinky-Modus – kleine Spielerei, umschaltbar unten auf der Startseite. */
-function pinkyOn() {
-  try { return localStorage.getItem("pinky") === "1"; } catch (e) { return false; }
-}
-function applyPinky(on) {
-  document.documentElement.toggleAttribute("data-pinky", on);
+/* ----- Anzeige-Umschalter (Startseite): Dunkelmodus + Pinky-Modus ----- */
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } };
+
+function darkOn() { return lsGet("theme") === "dark"; }
+function pinkyOn() { return lsGet("pinky") === "1"; }
+
+function applyDisplayModes() {
+  const root = document.documentElement;
+  if (darkOn()) root.setAttribute("data-theme", "dark");
+  else root.removeAttribute("data-theme");
+  root.toggleAttribute("data-pinky", pinkyOn());
   const tc = document.querySelector('meta[name="theme-color"]');
-  if (tc) tc.setAttribute("content", on ? "#ff1493" : "#1f3a68");
+  if (tc) tc.setAttribute("content", pinkyOn() ? "#ff1493" : darkOn() ? "#101215" : "#f7f8fa");
 }
 
 /* ------------------------------------------------------------ Datum / Wochen */
@@ -200,7 +206,7 @@ async function init() {
     return;
   }
 
-  applyPinky(pinkyOn());
+  applyDisplayModes();
 
   const ids = meta.cohorts.map((c) => c.id);
   let saved = null;
@@ -398,20 +404,29 @@ function renderHome() {
     CHANGELOG.map(([d, t]) =>
       `<li><span class="cl-date">${esc(d)}</span> ${esc(t)}</li>`).join("") +
     `</ul></details>` +
-    `<button type="button" class="pinky-toggle" id="pinkyBtn"></button>` +
-    `</section>`;
+    `<div class="home-toggles">` +
+    `<button type="button" class="toggle-btn" id="themeBtn"></button>` +
+    `<button type="button" class="toggle-btn" id="pinkyBtn"></button>` +
+    `</div></section>`;
 
-  const pb = document.getElementById("pinkyBtn");
-  const setLabel = () => {
-    pb.textContent = pinkyOn() ? "🎀 Pinky-Modus aus" : "🎀 Pinky-Modus an";
-    pb.setAttribute("aria-pressed", pinkyOn() ? "true" : "false");
+  const themeBtn = document.getElementById("themeBtn");
+  const pinkyBtn = document.getElementById("pinkyBtn");
+  const refresh = () => {
+    themeBtn.textContent = darkOn() ? "☀️ Heller Modus" : "🌙 Dunkelmodus";
+    pinkyBtn.textContent = pinkyOn() ? "🎀 Pinky-Modus aus" : "🎀 Pinky-Modus an";
+    themeBtn.setAttribute("aria-pressed", darkOn() ? "true" : "false");
+    pinkyBtn.setAttribute("aria-pressed", pinkyOn() ? "true" : "false");
   };
-  setLabel();
-  pb.addEventListener("click", () => {
-    const now = !pinkyOn();
-    try { localStorage.setItem("pinky", now ? "1" : "0"); } catch (e) { /* ignore */ }
-    applyPinky(now);
-    setLabel();
+  refresh();
+  themeBtn.addEventListener("click", () => {
+    lsSet("theme", darkOn() ? "light" : "dark");
+    applyDisplayModes();
+    refresh();
+  });
+  pinkyBtn.addEventListener("click", () => {
+    lsSet("pinky", pinkyOn() ? "0" : "1");
+    applyDisplayModes();
+    refresh();
   });
 }
 

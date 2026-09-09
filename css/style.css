@@ -2,55 +2,56 @@
 :root {
   --accent: #2f5aa0;
   --accent-ink: #ffffff;
-  --accent-soft: #e9eef6;
+  --accent-soft: #e9eef7;
 
-  --bg: #f4f5f7;
+  --bg: #f7f8fa;
   --surface: #ffffff;
-  --surface-2: #eceef1;
-  --text: #1c1e22;
-  --text-soft: #545861;
-  --text-faint: #868a92;
-  --border: #e1e3e7;
-  --border-strong: #cccfd5;
-  --free: #eef0f2;
+  --surface-2: #f0f1f4;
+  --text: #1b1d21;
+  --text-soft: #5b5f66;
+  --text-faint: #8b8f97;
+  --border: #e7e8ec;
+  --border-strong: #dcdee3;
+  --free: #f2f3f5;
 
-  --lk-bg: #2f5aa0;
-  --lk-ink: #ffffff;
-  --bk-bg: #e6e9ef;
-  --bk-ink: #3c4a61;
+  --lk-bg: #e5ecf6;
+  --lk-ink: #2f5aa0;
+  --bk-bg: #eef0f3;
+  --bk-ink: #5b6270;
 
   --radius: 12px;
   --radius-sm: 8px;
-  --shadow-sm: 0 1px 2px rgba(20, 24, 33, 0.05);
-  --shadow: 0 1px 2px rgba(20, 24, 33, 0.05), 0 8px 22px rgba(20, 24, 33, 0.06);
+  --radius-pill: 999px;
+  --shadow-sm: none;
+  --shadow: 0 6px 24px rgba(20, 24, 33, 0.08);
   --maxw: 960px;
   --sidebar-w: 250px;
   --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --accent: #7aa4dd;
-    --accent-ink: #12151a;
-    --accent-soft: #1b2735;
+:root[data-theme="dark"] { color-scheme: dark; }
+/* Dunkelmodus nur wenn ausdrücklich gewählt (Standard = hell). */
+:root[data-theme="dark"] {
+  --accent: #7ea6df;
+  --accent-ink: #12151a;
+  --accent-soft: #1e2a3b;
 
-    --bg: #0f1114;
-    --surface: #171a1e;
-    --surface-2: #1e2127;
-    --text: #e7e8eb;
-    --text-soft: #a3a7ad;
-    --text-faint: #71757d;
-    --border: #282b31;
-    --border-strong: #363a41;
-    --free: #1a1d22;
+  --bg: #101215;
+  --surface: #181b1f;
+  --surface-2: #202329;
+  --text: #e8e9ec;
+  --text-soft: #a4a8af;
+  --text-faint: #71757d;
+  --border: #2a2d34;
+  --border-strong: #383b43;
+  --free: #1b1e23;
 
-    --lk-bg: #3f6cb5;
-    --lk-ink: #ffffff;
-    --bk-bg: #262b36;
-    --bk-ink: #aab8cf;
+  --lk-bg: #23324a;
+  --lk-ink: #9fbde4;
+  --bk-bg: #23262d;
+  --bk-ink: #aab0bb;
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 26px rgba(0, 0, 0, 0.3);
-  }
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
 /* 🎀 ============================================ Pinky-Modus (Spielerei) 🎀 */
@@ -269,8 +270,7 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 .empty {
   margin: 1.25rem 0;
   padding: 1rem 1.15rem;
-  background: var(--surface);
-  border: 1px dashed var(--border-strong);
+  background: var(--surface-2);
   border-radius: var(--radius-sm);
   color: var(--text-soft);
 }
@@ -283,9 +283,8 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
   font: inherit;
   color: var(--text);
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-sm);
 }
 .search input {
   max-width: 540px;
@@ -337,14 +336,13 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 /* ------------------------------------------------------------------ badges */
 .badge {
   display: inline-block;
-  min-width: 2.6rem;
-  padding: 0.12rem 0.42rem;
-  border-radius: 5px;
-  font-size: 0.8rem;
+  min-width: 2.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
   font-weight: 700;
   text-align: center;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.01em;
 }
 .badge-lk { background: var(--lk-bg); color: var(--lk-ink); }
 .badge-bk { background: var(--bk-bg); color: var(--bk-ink); }
@@ -404,24 +402,25 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 .changelog li { padding: 0.12rem 0; }
 .cl-date { font-variant-numeric: tabular-nums; margin-right: 0.35rem; opacity: 0.8; }
 
-.pinky-toggle {
+.home-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 1.75rem;
-  padding: 0.5rem 1rem;
+}
+.toggle-btn {
+  padding: 0.45rem 0.9rem;
   font: inherit;
-  font-size: 0.88rem;
-  font-weight: 650;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-soft);
   background: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
   cursor: pointer;
 }
-.pinky-toggle:hover { border-color: var(--accent); color: var(--accent); }
-:root[data-pinky] .pinky-toggle {
-  color: var(--accent);
-  border-color: var(--accent);
-  background: #fff0f7;
-}
+.toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+:root[data-pinky] #pinkyBtn { color: var(--accent); border-color: var(--accent); background: #fff0f7; }
 
 /* ----------------------------------------------------------------- factbox */
 .factbox {
@@ -523,7 +522,7 @@ table.tt .desc {
   min-width: 2.4rem;
   color: var(--text-soft);
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
   line-height: 1;
@@ -586,7 +585,7 @@ table.tt .desc {
   font-weight: 700;
   color: var(--text-soft);
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
@@ -656,18 +655,16 @@ table.tt .desc {
 
 /* ------------------------------------------------ Ausfall / Vertretung (Events) */
 :root {
-  --ev-ausfall: #e60023;          /* knallrot */
-  --ev-ausfall-bg: #ffdfe2;
-  --ev-vertretung: #b06a00;
-  --ev-vertretung-bg: #fbefdb;
+  --ev-ausfall: #e11d2e;          /* knallrot */
+  --ev-ausfall-bg: #fdeaec;
+  --ev-vertretung: #a9660a;
+  --ev-vertretung-bg: #fbf0dd;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ev-ausfall: #ff4d5e;
-    --ev-ausfall-bg: #43141a;
-    --ev-vertretung: #e6b667;
-    --ev-vertretung-bg: #3a2f18;
-  }
+:root[data-theme="dark"] {
+  --ev-ausfall: #ff5a6a;
+  --ev-ausfall-bg: #3d161b;
+  --ev-vertretung: #e6b667;
+  --ev-vertretung-bg: #362d18;
 }
 .ev {
   display: inline-block;

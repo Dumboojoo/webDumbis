@@ -3,8 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#1f3a68">
+  <meta name="theme-color" content="#f7f8fa">
   <title>webDumbis · Stundenpläne</title>
+  <script>
+    // Anzeige-Modus vor dem ersten Malen setzen (kein Aufblitzen).
+    try {
+      if (localStorage.getItem("theme") === "dark") document.documentElement.setAttribute("data-theme", "dark");
+      if (localStorage.getItem("pinky") === "1") document.documentElement.setAttribute("data-pinky", "");
+    } catch (e) {}
+  </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
