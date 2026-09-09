@@ -382,6 +382,12 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 .stufe-meta { display: block; margin-top: 0.3rem; color: var(--text-soft); font-size: 0.88rem; }
 .disclaimer { color: var(--text-faint); font-size: 0.83rem; line-height: 1.55; }
 
+.changelog { margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-faint); }
+.changelog summary { cursor: pointer; font-weight: 650; width: max-content; }
+.changelog ul { list-style: none; margin: 0.5rem 0 0; padding: 0; }
+.changelog li { padding: 0.12rem 0; }
+.cl-date { font-variant-numeric: tabular-nums; margin-right: 0.35rem; opacity: 0.8; }
+
 .pinky-toggle {
   margin-top: 1.75rem;
   padding: 0.5rem 1rem;

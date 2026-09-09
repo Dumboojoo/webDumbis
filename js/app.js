@@ -34,6 +34,14 @@ const NAV = [
   { id: "lehrer", label: "Lehrkräfte", short: "Lehrer", icon: "cap" },
 ];
 
+/* Kleiner Änderungs-Log für die Startseite – neuste zuerst, von Hand pflegen. */
+const CHANGELOG = [
+  ["09.09.", "Ausfälle & Vertretungen aus WebUntis"],
+  ["09.09.", "Zwischen Wochen wechseln – mit Datum und Ferien"],
+  ["09.09.", "Stundenplan am Handy: ein Tag pro Ansicht"],
+  ["09.09.", "K1 und K2 getrennt, Pinky-Modus"],
+];
+
 /* --------------------------------------------------------------------- state */
 let meta = null;
 let cohortId = null;
@@ -339,6 +347,10 @@ function renderHome() {
     `<div class="stufen">${chooser}</div>` +
     `<p class="disclaimer">Privates Projekt, nicht von der Schule und ohne Gewähr. Wenn hier was ` +
     `anderes steht als am Aushang, dann stimmt der Aushang.</p>` +
+    `<details class="changelog"><summary>Änderungen</summary><ul>` +
+    CHANGELOG.map(([d, t]) =>
+      `<li><span class="cl-date">${esc(d)}</span> ${esc(t)}</li>`).join("") +
+    `</ul></details>` +
     `<button type="button" class="pinky-toggle" id="pinkyBtn"></button>` +
     `</section>`;
 
