@@ -1,2 +1,3 @@
 pdfplumber>=0.11
 webuntis>=0.1.24
+requests>=2.28

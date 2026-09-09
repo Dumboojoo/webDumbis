@@ -61,22 +61,24 @@ Ferientage** ergänzen. Nach dem Ändern einfach `data/calendar.json` committen 
 ## Ausfälle aus WebUntis
 
 `data/<stufe>/events.json` enthält Ausfälle und Vertretungen; sie werden im Stundenplan
-angezeigt (durchgestrichen + „entfällt" bzw. „Vertretung"). Gefüllt wird die Datei
-**lokal** mit `build/fetch_untis.py` – nicht automatisch, nicht im Browser (WebUntis
-blockt Cross-Origin, und Zugangsdaten dürfen nicht ins öffentliche Repo).
+angezeigt (durchgestrichen + „entfällt" bzw. „Vertretung"). Befüllt wird die Datei
+**lokal** – nicht im Browser (WebUntis blockt Cross-Origin, Zugangsdaten gehören nicht
+ins öffentliche Repo).
 
 ```
-pip install -r build/requirements.txt
-cp build/untis-config.example.json build/untis-config.json     # dann ausfüllen
+pip3 install -r build/requirements.txt      # nur beim ersten Mal
 python3 build/fetch_untis.py
 ```
 
-- `build/untis-config.json` (Server, Schule, Login, Klassen je Stufe) steht in
-  `.gitignore` und darf **nicht** committet werden.
-- Die Ausgabe zeigt eine Tabelle aller gefundenen Änderungen – prüfen, ob die
-  Fachkürzel zu den webDumbis-Kurscodes passen. Wenn nicht: `subjectMap` in der Config
-  setzen (z. B. `{"GK": "gk3"}`).
-- Passt alles: `data/**/events.json` committen und pushen.
+Beim ersten Start fragt das Skript nach **Schule** (Suche, keine URL nötig), **Login**
+und **Stufe** und speichert das in `build/untis-config.json` (steht in `.gitignore`).
+Danach reicht der eine Befehl: es holt die Ausfälle, zeigt sie an und lädt sie nach
+kurzer Rückfrage direkt zu GitHub hoch.
+
+Meldet das Skript, dass ein Kürzel zu keinem webDumbis-Kurscode passt, in
+`build/untis-config.json` unter `"subjectMap"` zuordnen (z. B. `{"GK": "gk3"}`) und
+nochmal starten. Bei 2-Faktor-Anmeldung des WebUntis-Kontos klappt der Passwort-Login
+(noch) nicht.
 
 ## Fehlende Lehrkräfte
 
