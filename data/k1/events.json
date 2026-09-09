@@ -1,5 +1,61 @@
 {
- "generatedAt": "",
- "source": "",
- "events": []
+ "generatedAt": "2026-09-09 21:57",
+ "source": "WebUntis",
+ "events": [
+  {
+   "date": "2026-09-14",
+   "period": 8,
+   "endPeriod": 9,
+   "code": "spo2",
+   "type": "ausfall",
+   "teacher": "",
+   "newTeacher": "",
+   "room": "H1",
+   "text": ""
+  },
+  {
+   "date": "2026-09-14",
+   "period": 9,
+   "endPeriod": 10,
+   "code": "spo2",
+   "type": "ausfall",
+   "teacher": "",
+   "newTeacher": "",
+   "room": "H1",
+   "text": ""
+  },
+  {
+   "date": "2026-09-16",
+   "period": 5,
+   "endPeriod": 6,
+   "code": "d3",
+   "type": "ausfall",
+   "teacher": "",
+   "newTeacher": "",
+   "room": "A601",
+   "text": ""
+  },
+  {
+   "date": "2026-09-16",
+   "period": 6,
+   "endPeriod": 7,
+   "code": "d3",
+   "type": "ausfall",
+   "teacher": "",
+   "newTeacher": "",
+   "room": "A601",
+   "text": ""
+  },
+  {
+   "date": "2026-09-17",
+   "period": 1,
+   "endPeriod": 2,
+   "code": "E1",
+   "type": "ausfall",
+   "teacher": "",
+   "newTeacher": "",
+   "room": "B3",
+   "text": ""
+  }
+ ]
 }
