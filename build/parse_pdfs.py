@@ -283,12 +283,31 @@ def process_cohort(cohort: dict, subjects: dict[str, str],
     students, valid_from, unk_s, unmatched = parse_stundenplaene(
         cohort["stundenplan"], courses, subjects)
 
-    # Fehlende Lehrkraefte aus build/course-teachers.json nachtragen.
+    # build/course-teachers.json anwenden: fehlende Lehrkraefte nachtragen ODER
+    # falsche korrigieren. Eintrag pro Kurscode: "Frau Name" (nur Kursliste-Name)
+    # oder {"teacher": "Frau Name", "abbr": "Nam"} (auch das Kuerzel in den Zellen).
     override = teacher_overrides.get(cohort["id"], {})
     missing_teachers = []
+    corrected = []
     for code, c in courses.items():
-        if not c["teacher"]:
-            c["teacher"] = (override.get(code) or "").strip()
+        ov = override.get(code)
+        if isinstance(ov, str):
+            ov = {"teacher": ov}
+        if ov:
+            name = (ov.get("teacher") or "").strip()
+            abbr = (ov.get("abbr") or "").strip()
+            if name and name != c["teacher"]:
+                if c["teacher"]:
+                    corrected.append(f"{code}: {c['teacher']} -> {name}")
+                c["teacher"] = name
+            elif name:
+                c["teacher"] = name
+            if abbr:
+                for s in students.values():
+                    for day in DAYS:
+                        for cell in s["timetable"][day]:
+                            if cell and cell["code"] == code and cell["teacher"] != abbr:
+                                cell["teacher"] = abbr
         if not c["teacher"]:
             missing_teachers.append(code)
     missing_teachers.sort()
@@ -313,6 +332,7 @@ def process_cohort(cohort: dict, subjects: dict[str, str],
         "studentCount": len(student_list), "courseCount": len(courses),
         "unknown": sorted(unk_c | unk_s), "unmatched": sorted(unmatched),
         "flagged": flagged, "empty": empty, "missingTeachers": missing_teachers,
+        "corrected": corrected,
     }
 
 
@@ -357,6 +377,8 @@ def main():
             print(f"    Kurscodes ohne Kursliste: {r['unmatched']}")
         if r["empty"]:
             print(f"    WARNUNG Schueler ohne Stunden: {r['empty']}")
+        for corr in r["corrected"]:
+            print(f"    korrigiert (course-teachers.json): {corr}")
     if unknown:
         print(f"UNBEKANNTE Fach-Kuerzel (in build/subjects.json ergaenzen): {unknown}")
     if flagged:

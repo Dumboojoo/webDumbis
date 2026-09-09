@@ -41,7 +41,7 @@ data/k1/events.json     Ausfälle / Vertretungen K1 (aus WebUntis, siehe unten)
 data/k2/…               dasselbe für K2
 build/parse_pdfs.py     PDF-Konverter (nur lokal nötig)
 build/subjects.json     Fach-Kürzel → ausgeschriebener Name (von Hand pflegbar)
-build/course-teachers.json  Lehrkräfte, die im PDF fehlen (von Hand nachtragen)
+build/course-teachers.json  Lehrkräfte korrigieren/nachtragen (von Hand)
 build/fetch_untis.py    holt Ausfälle aus WebUntis (nur lokal, siehe unten)
 ```
 
@@ -80,12 +80,23 @@ Meldet das Skript, dass ein Kürzel zu keinem webDumbis-Kurscode passt, in
 nochmal starten. Bei 2-Faktor-Anmeldung des WebUntis-Kontos klappt der Passwort-Login
 (noch) nicht.
 
-## Fehlende Lehrkräfte
+## Lehrkräfte korrigieren / nachtragen
 
-Wenn im Schul-PDF für einen Kurs keine Lehrkraft steht (z. B. K2 `gk3`, `m1`), meldet
-`parse_pdfs.py` das. Echte Namen in `build/course-teachers.json` eintragen
-(`{ "k2": { "gk3": "Frau …" } }`) und `python3 build/parse_pdfs.py` erneut ausführen.
-Solange nichts eingetragen ist, zeigt die Seite „Lehrkraft: noch nicht hinterlegt".
+`build/course-teachers.json` überschreibt falsche Lehrkräfte aus dem Schul-PDF oder
+trägt fehlende nach. Pro Kurscode:
+
+```json
+"k1": {
+  "d3": { "teacher": "Frau Moser", "abbr": "Mos" }
+}
+```
+
+- Nur `teacher` → ändert den Namen im Kursprofil.
+- Zusätzlich `abbr` → ersetzt auch das Kürzel in allen Stundenplan-Zellen des Kurses.
+- `"gk3": ""` (leer) → Kurs bleibt „ohne Lehrkraft" (Seite zeigt „noch nicht hinterlegt").
+
+Nach dem Ändern `python3 build/parse_pdfs.py` erneut ausführen und `data/**` committen.
+Der Report zeigt an, welche Kurse korrigiert wurden und welche noch ohne Lehrkraft sind.
 
 ## Daten aktualisieren
 
