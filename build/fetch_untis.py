@@ -13,6 +13,7 @@ gleich auf GitHub hoch.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from datetime import date, datetime, timedelta
@@ -131,13 +132,16 @@ def build_period_map(session) -> dict[str, int]:
 
 
 def period_number(pmap: dict, dt) -> int:
-    hh = dt.strftime("%H:%M")
-    if hh in pmap:
-        return pmap[hh]
+    """Stundennummer, in deren Slot 'dt' fällt (letzte Startzeit <= dt)."""
     target = dt.hour * 60 + dt.minute
-    best = min(pmap.items(), key=lambda kv: abs(int(kv[0][:2]) * 60 + int(kv[0][3:]) - target),
-              default=("", 0))
-    return best[1]
+    slots = sorted((int(k[:2]) * 60 + int(k[3:]), v) for k, v in pmap.items())
+    best = slots[0][1] if slots else 0
+    for m, v in slots:
+        if m <= target + 1:
+            best = v
+        else:
+            break
+    return best
 
 
 # ------------------------------------------------------------------- Abholen
@@ -211,9 +215,14 @@ def main():
                  f"Prüfe Benutzername/Passwort in build/untis-config.json. "
                  f"Bei 2-Faktor-Anmeldung sag Bescheid.")
 
-    with session:
+    try:
         pmap = build_period_map(session)
         events = fetch_events(session, cfg, pmap)
+    finally:
+        try:
+            session.logout()
+        except Exception:  # noqa: BLE001
+            pass  # Abmelden schlägt manchmal fehl – egal, Daten haben wir schon.
 
     out = DATA_DIR / cid / "events.json"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -223,17 +232,27 @@ def main():
     }, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print(f"\n{len(events)} Einträge ({cid}):")
-    kc = known_codes(cid)
+    kc_lower = {c.lower(): c for c in known_codes(cid)}
     unmatched = set()
     for e in events:
         tag = "ENTFÄLLT  " if e["type"] == "ausfall" else "Vertretung"
         print(f"  {e['date']}  {e['period']}.-{e['endPeriod']}.  {e['code']:<7} {tag} {e['text']}")
-        if kc and e["code"].lower() not in kc:
+        if kc_lower and e["code"].lower() not in kc_lower:
             unmatched.add(e["code"])
     if unmatched:
-        print(f"\n  Achtung: {sorted(unmatched)} passt zu keinem Kurscode in webDumbis.")
-        print(f"  In build/untis-config.json unter \"subjectMap\" zuordnen, z. B. "
-              f'{{"{sorted(unmatched)[0]}": "…"}}, dann nochmal starten.')
+        print(f"\n  Achtung – diese Kürzel passen zu keinem webDumbis-Kurs:")
+        suggestions = {}
+        for u in sorted(unmatched):
+            m = re.match(r"^([A-Za-z]+?)(\d*)$", u)
+            letters, digits = (m.group(1), m.group(2)) if m else (u, "")
+            for n in (1, 2, 3):
+                guess = (letters[:n] + digits).lower()
+                if guess in kc_lower:
+                    suggestions[u] = kc_lower[guess]
+                    break
+            print(f"    {u}" + (f"  ->  vermutlich \"{suggestions[u]}\"" if u in suggestions else ""))
+        sm = ", ".join(f'"{u}": "{suggestions.get(u, "…")}"' for u in sorted(unmatched))
+        print(f'  In build/untis-config.json:  "subjectMap": {{ {sm} }}  – dann nochmal starten.')
 
     if not events:
         print("  (Aktuell keine Ausfälle im Zeitraum.)")

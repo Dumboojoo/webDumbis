@@ -3,7 +3,7 @@
 const DAYS = ["Mo", "Di", "Mi", "Do", "Fr"];
 const DAY_LABELS = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag" };
 const MAX_RESULTS = 30;
-const TOP_VIEWS = ["suche", "schueler", "kurse", "gemeinsam", "lehrer"];
+const TOP_VIEWS = ["suche", "schueler", "kurse", "gemeinsam", "ausfaelle", "lehrer"];
 
 const view = document.getElementById("view");
 const navEl = document.getElementById("nav");
@@ -25,17 +25,26 @@ const ICONS = {
   venn: I(`<circle cx="9.5" cy="12" r="5.7"/><circle cx="14.5" cy="12" r="5.7"/>`),
   cap: I(`<path d="M12 4.5 2.5 9 12 13.5 21.5 9 12 4.5Z"/>` +
     `<path d="M6.5 11.3V16c0 1.6 2.5 3 5.5 3s5.5-1.4 5.5-3v-4.7"/><line x1="21.5" y1="9" x2="21.5" y2="13.5"/>`),
+  alert: I(`<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>` +
+    `<line x1="12" y1="9" x2="12" y2="13.5"/><line x1="12" y1="17" x2="12.01" y2="17"/>`),
+  more: I(`<circle cx="5" cy="12" r="1.5" fill="currentColor"/>` +
+    `<circle cx="12" cy="12" r="1.5" fill="currentColor"/>` +
+    `<circle cx="19" cy="12" r="1.5" fill="currentColor"/>`),
 };
 const NAV = [
-  { id: "suche", label: "Suche", short: "Suche", icon: "search" },
-  { id: "schueler", label: "Schüler/innen", short: "Schüler", icon: "users" },
-  { id: "kurse", label: "Kurse", short: "Kurse", icon: "book" },
-  { id: "gemeinsam", label: "Gemeinsame Kurse", short: "Gemeinsam", icon: "venn" },
-  { id: "lehrer", label: "Lehrkräfte", short: "Lehrer", icon: "cap" },
+  { id: "suche", label: "Suche", short: "Suche", icon: "search", where: "both" },
+  { id: "schueler", label: "Schüler/innen", short: "Schüler", icon: "users", where: "both" },
+  { id: "kurse", label: "Kurse", short: "Kurse", icon: "book", where: "both" },
+  { id: "gemeinsam", label: "Gemeinsame Kurse", short: "Gemeinsam", icon: "venn", where: "both" },
+  { id: "ausfaelle", label: "Ausfälle", short: "Ausfälle", icon: "alert", where: "more" },
+  { id: "lehrer", label: "Lehrkräfte", short: "Lehrer", icon: "cap", where: "more" },
 ];
+// "more"-Einträge stehen am Desktop in der Seitenleiste, am Handy im "Mehr"-Menü.
+const MORE_NAV = NAV.filter((n) => n.where === "more").map((n) => n.id);
 
 /* Kleiner Änderungs-Log für die Startseite – neuste zuerst, von Hand pflegen. */
 const CHANGELOG = [
+  ["09.09.", "Eigene Ansicht für Ausfälle; entfallene Stunden knallrot im Plan"],
   ["09.09.", "Ausfälle & Vertretungen aus WebUntis"],
   ["09.09.", "Zwischen Wochen wechseln – mit Datum und Ferien"],
   ["09.09.", "Stundenplan am Handy: ein Tag pro Ansicht"],
@@ -47,6 +56,7 @@ let meta = null;
 let cohortId = null;
 const store = {};   // id -> built cohort data
 let cur = null;     // active cohort data
+let eventCohorts = [];   // Stufen-Labels mit WebUntis-Anbindung (für die Ausfälle-Ansicht)
 
 /* -------------------------------------------------------------------- helpers */
 function norm(s) {
@@ -197,12 +207,42 @@ async function init() {
   cohortId = ids.includes(saved) ? saved : ids[0];
 
   navEl.innerHTML = NAV.map((n) =>
-    `<a data-nav="${n.id}">${ICONS[n.icon]}` +
+    `<a data-nav="${n.id}" class="nav-where-${n.where}">${ICONS[n.icon]}` +
     `<span class="nav-label">${esc(n.label)}</span>` +
-    `<span class="nav-label-m">${esc(n.short)}</span></a>`).join("");
+    `<span class="nav-label-m">${esc(n.short)}</span></a>`).join("") +
+    `<button type="button" class="nav-more-btn" id="navMore" data-nav="more" ` +
+    `aria-haspopup="true" aria-expanded="false">${ICONS.more}` +
+    `<span class="nav-label-m">Mehr</span></button>` +
+    `<div class="more-sheet" id="moreSheet">` +
+    NAV.filter((n) => n.where === "more").map((n) =>
+      `<a data-nav="${n.id}">${ICONS[n.icon]}<span>${esc(n.label)}</span></a>`).join("") +
+    `</div>`;
+
+  document.getElementById("navMore").addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMore();
+  });
+  document.getElementById("moreSheet").addEventListener("click", () => closeMore());
+  document.addEventListener("click", closeMore);
+
+  // Welche Stufen haben WebUntis-Ausfälle?
+  const srcs = await Promise.all(meta.cohorts.map((c) =>
+    fetch(`data/${c.id}/events.json`, { cache: "no-cache" }).then((r) => r.json()).catch(() => ({}))));
+  eventCohorts = meta.cohorts.filter((c, i) => srcs[i] && srcs[i].source).map((c) => c.label);
 
   window.addEventListener("hashchange", route);
   route();
+}
+
+function toggleMore() {
+  const open = document.getElementById("moreSheet").classList.toggle("open");
+  document.getElementById("navMore").setAttribute("aria-expanded", open ? "true" : "false");
+}
+function closeMore() {
+  const sheet = document.getElementById("moreSheet");
+  if (sheet) sheet.classList.remove("open");
+  const nm = document.getElementById("navMore");
+  if (nm) nm.setAttribute("aria-expanded", "false");
 }
 
 async function loadCohort(id) {
@@ -210,7 +250,9 @@ async function loadCohort(id) {
   const [sData, cData, eData] = await Promise.all([
     fetch(`data/${id}/students.json`).then((r) => r.json()),
     fetch(`data/${id}/courses.json`).then((r) => r.json()),
-    fetch(`data/${id}/events.json`).then((r) => r.json()).catch(() => ({ events: [] })),
+    // Ausfälle ändern sich oft -> immer frisch laden (revalidieren).
+    fetch(`data/${id}/events.json`, { cache: "no-cache" }).then((r) => r.json())
+      .catch(() => ({ events: [] })),
   ]);
   const students = sData.students || [];
   const courses = cData.courses || [];
@@ -243,7 +285,9 @@ async function loadCohort(id) {
 
   store[id] = {
     id, students, courses, byNr, byCode, studentCodes, coursesByTeacher, subjectsOrdered,
-    eventsByDate, info: cohortInfo(id),
+    eventsByDate,
+    eventsMeta: { source: (eData && eData.source) || "", generatedAt: (eData && eData.generatedAt) || "" },
+    info: cohortInfo(id),
   };
   return store[id];
 }
@@ -255,10 +299,13 @@ function renderChrome(activeNav) {
     `aria-current="${c.id === cohortId ? "true" : "false"}">${esc(c.label)}` +
     `<span class="cs-abi">Abi ${esc(c.abi)}</span></a>`).join("");
 
-  navEl.querySelectorAll("a").forEach((a) => {
+  navEl.querySelectorAll("a[data-nav]").forEach((a) => {
     a.setAttribute("href", L(a.dataset.nav));
     a.classList.toggle("active", a.dataset.nav === activeNav);
   });
+  const nm = document.getElementById("navMore");
+  if (nm) nm.classList.toggle("active", MORE_NAV.includes(activeNav));
+  closeMore();
 
   const info = cohortInfo(cohortId);
   const bits = [];
@@ -315,6 +362,7 @@ async function route() {
     case "schueler": renderStudentList(); break;
     case "kurse": renderCourseList(); break;
     case "gemeinsam": renderShared(a, b); break;
+    case "ausfaelle": renderAusfaelle(); break;
     case "lehrer": renderTeacherList(); break;
     case "s": renderStudent(a, week); activeNav = "schueler"; break;
     case "k": renderCourse(a); activeNav = "kurse"; break;
@@ -505,6 +553,54 @@ function renderTeacher(name) {
     `<p class="sub">${list.length} Kurs${list.length === 1 ? "" : "e"} · ` +
     `${total} Kursbelegungen · ${esc(cur.info.label)}</p>` +
     `<ul class="list">${list.map((c) => courseRow(c, { teacher: false })).join("")}</ul>`;
+}
+
+/* ------------------------------------------------------------ Ausfälle-Ansicht */
+function eventLineHtml(ev) {
+  const c = cur.byCode.get(ev.code);
+  const p = c ? parseLabel(c.label, c.code) : { code: ev.code, desc: "" };
+  const when = ev.endPeriod > ev.period ? `${ev.period}.–${ev.endPeriod}.` : `${ev.period}.`;
+  const codeHtml = c
+    ? `<a class="code" href="${L("k", ev.code)}">${esc(p.code)}</a>`
+    : `<span class="code">${esc(ev.code)}</span>`;
+  return `<li class="ev-list-item ev-${ev.type}"><span class="ev-when">${when} Std</span> ` +
+    `${codeHtml}${p.desc ? ` <span class="ev-sub">${esc(p.desc)}</span>` : ""} ` +
+    `<span class="ev ev-${ev.type}">${ev.type === "ausfall" ? "entfällt" : "Vertretung"}</span>` +
+    (ev.type === "vertretung" && ev.newTeacher ? ` <span class="ev-sub">→ ${esc(ev.newTeacher)}</span>` : "") +
+    (ev.room ? ` <span class="ev-sub">${esc(ev.room)}</span>` : "") +
+    (ev.text ? ` <span class="ev-text">${esc(ev.text)}</span>` : "") + `</li>`;
+}
+
+function renderAusfaelle() {
+  if (!cur.eventsMeta.source) {
+    const others = eventCohorts.filter((l) => l !== cur.info.label);
+    view.innerHTML =
+      `<h1>Ausfälle</h1>` +
+      `<p class="empty">Für ${esc(cur.info.label)} werden gerade keine Ausfälle ausgelesen` +
+      (others.length ? ` – aktuell nur ${esc(others.join(", "))}.` : ".") + `</p>`;
+    return;
+  }
+
+  const today = isoDate(new Date());
+  const days = [...cur.eventsByDate.entries()]
+    .filter(([d]) => d >= today)
+    .sort((a, b) => a[0].localeCompare(b[0]));
+
+  let body = "";
+  for (const [d, evs] of days) {
+    const dt = parseISO(d);
+    body += `<h2 class="group-title">${DAY_LABELS[DAYS[(dt.getDay() + 6) % 7]] || ""}, ` +
+      `${dt.getDate()}. ${MONTHS_SHORT[dt.getMonth()]}</h2>` +
+      `<ul class="ev-list">` +
+      [...evs].sort((a, b) => a.period - b.period).map(eventLineHtml).join("") + `</ul>`;
+  }
+
+  view.innerHTML =
+    `<h1>Ausfälle</h1>` +
+    `<p class="sub">${esc(cur.info.label)}` +
+    (cur.eventsMeta.generatedAt ? ` · Stand ${esc(cur.eventsMeta.generatedAt)}` : "") +
+    ` · aus WebUntis</p>` +
+    (body || `<p class="empty">Aktuell keine Ausfälle im ausgelesenen Zeitraum.</p>`);
 }
 
 /* --------------------------------------------------------- student profile */

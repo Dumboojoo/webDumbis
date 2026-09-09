@@ -191,7 +191,8 @@ main {
 
 /* --------------------------------------------------------------------- nav */
 #nav { display: flex; flex-direction: column; gap: 1px; }
-#nav a {
+#nav a:not(.more-sheet a),
+.nav-more-btn {
   display: flex;
   align-items: center;
   gap: 0.7rem;
@@ -201,10 +202,25 @@ main {
   font-weight: 550;
   font-size: 0.94rem;
 }
-#nav a:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
-#nav a.active { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+.nav-more-btn {
+  font: inherit;
+  font-weight: 550;
+  font-size: 0.94rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+#nav a:not(.more-sheet a):hover,
+.nav-more-btn:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+#nav a.active:not(.more-sheet a),
+.nav-more-btn.active { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
 #nav .ico { width: 19px; height: 19px; flex-shrink: 0; }
 .nav-label-m { display: none; }
+
+/* "Mehr"-Knopf + Menü: nur am Handy, standardmäßig zu */
+.nav-more-btn { display: none; }
+.more-sheet { display: none; }
 
 .side-foot {
   margin-top: auto;
@@ -640,50 +656,67 @@ table.tt .desc {
 
 /* ------------------------------------------------ Ausfall / Vertretung (Events) */
 :root {
-  --ev-ausfall: #c02626;
-  --ev-ausfall-bg: #fbe9e9;
+  --ev-ausfall: #e60023;          /* knallrot */
+  --ev-ausfall-bg: #ffdfe2;
   --ev-vertretung: #b06a00;
   --ev-vertretung-bg: #fbefdb;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --ev-ausfall: #ef8f8f;
-    --ev-ausfall-bg: #3a2020;
+    --ev-ausfall: #ff4d5e;
+    --ev-ausfall-bg: #43141a;
     --ev-vertretung: #e6b667;
     --ev-vertretung-bg: #3a2f18;
   }
 }
 .ev {
   display: inline-block;
-  padding: 0.02rem 0.36rem;
+  padding: 0.05rem 0.4rem;
   border-radius: 5px;
   font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-weight: 800;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   vertical-align: 0.08em;
   white-space: nowrap;
 }
-.ev-ausfall { color: var(--ev-ausfall); background: var(--ev-ausfall-bg); }
+.ev-ausfall { color: #fff; background: var(--ev-ausfall); }
 .ev-vertretung { color: var(--ev-vertretung); background: var(--ev-vertretung-bg); }
 
 td.ev-cell.ev-ausfall, .tt-row.ev-ausfall { background: var(--ev-ausfall-bg); }
 td.ev-cell.ev-vertretung, .tt-row.ev-vertretung { background: var(--ev-vertretung-bg); }
-.ev-ausfall .code { text-decoration: line-through; opacity: 0.65; }
-.ev-text { font-style: italic; }
+td.ev-cell.ev-ausfall { box-shadow: inset 3px 0 0 var(--ev-ausfall); }
+.ev-ausfall .code {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  color: var(--ev-ausfall) !important;
+  font-weight: 800;
+}
+.ev-text { font-style: italic; color: var(--text-soft); }
 
 .ev-list { list-style: none; margin: 0.6rem 0 0; padding: 0; }
 .ev-list-item {
-  padding: 0.5rem 0.9rem;
+  padding: 0.6rem 0.9rem;
   background: var(--surface);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
   border-radius: var(--radius-sm);
-  margin-bottom: 0.35rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
-.ev-list-item.ev-ausfall { border-left: 3px solid var(--ev-ausfall); }
-.ev-list-item.ev-vertretung { border-left: 3px solid var(--ev-vertretung); }
-.ev-when { color: var(--text-faint); font-variant-numeric: tabular-nums; margin-right: 0.3rem; }
+.ev-list-item.ev-ausfall { border-left-color: var(--ev-ausfall); }
+.ev-list-item.ev-vertretung { border-left-color: var(--ev-vertretung); }
+.ev-list-item .code { font-weight: 700; }
+.ev-list-item.ev-ausfall .code { text-decoration: line-through; color: var(--ev-ausfall); }
+.ev-when {
+  display: inline-block;
+  min-width: 3.6rem;
+  color: var(--text-faint);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ev-sub { color: var(--text-soft); font-size: 0.92em; }
 
 /* ----------------------------------------------------------------- pickers */
 .pickers {
@@ -732,9 +765,14 @@ td.ev-cell.ev-vertretung, .tt-row.ev-vertretung { background: var(--ev-vertretun
     border-top: 1px solid var(--border);
     box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.06);
   }
-  #nav a {
+  #nav a.nav-where-more { display: none !important; }   /* Ausfälle/Lehrkräfte -> "Mehr"-Menü */
+  .nav-more-btn { display: flex !important; }
+
+  #nav a:not(.more-sheet a),
+  .nav-more-btn {
     flex: 1;
     flex-direction: column;
+    align-items: center;
     gap: 0.12rem;
     padding: 0.34rem 0.1rem;
     border-radius: 7px;
@@ -742,10 +780,40 @@ td.ev-cell.ev-vertretung, .tt-row.ev-vertretung { background: var(--ev-vertretun
     font-weight: 600;
     text-align: center;
   }
-  #nav a:hover { background: none; }
-  #nav a.active { background: none; color: var(--accent); }
+  #nav a:not(.more-sheet a):hover,
+  .nav-more-btn:hover { background: none; }
+  #nav a.active:not(.more-sheet a),
+  .nav-more-btn.active { background: none; color: var(--accent); }
   #nav .ico { width: 21px; height: 21px; }
   .nav-label { display: none; }
+
+  .more-sheet { display: none; }
+  .more-sheet.open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    right: 0.6rem;
+    bottom: calc(4.1rem + env(safe-area-inset-bottom));
+    z-index: 31;
+    min-width: 12rem;
+    padding: 0.35rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .more-sheet a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 0.92rem;
+    font-weight: 550;
+  }
+  .more-sheet a:hover { background: var(--surface-2); text-decoration: none; }
+  .more-sheet .ico { width: 19px; height: 19px; flex-shrink: 0; }
   .nav-label-m {
     display: block;
     max-width: 100%;
@@ -777,6 +845,6 @@ td.ev-cell.ev-vertretung, .tt-row.ev-vertretung { background: var(--ev-vertretun
 }
 
 @media (max-width: 380px) {
-  #nav a { font-size: 0.6rem; }
+  #nav a:not(.more-sheet a), .nav-more-btn { font-size: 0.6rem; }
   .brand { font-size: 1.05rem; }
 }
