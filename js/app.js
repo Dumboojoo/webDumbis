@@ -75,6 +75,16 @@ function groupLabel(g) {
 const L = (...seg) => "#/" + [cohortId, ...seg.filter((x) => x != null)].join("/");
 const cohortInfo = (id) => meta.cohorts.find((c) => c.id === id);
 
+/* 🎀 Pinky-Modus – kleine Spielerei, umschaltbar unten auf der Startseite. */
+function pinkyOn() {
+  try { return localStorage.getItem("pinky") === "1"; } catch (e) { return false; }
+}
+function applyPinky(on) {
+  document.documentElement.toggleAttribute("data-pinky", on);
+  const tc = document.querySelector('meta[name="theme-color"]');
+  if (tc) tc.setAttribute("content", on ? "#ff1493" : "#1f3a68");
+}
+
 /* ----------------------------------------------------------------------- init */
 async function init() {
   try {
@@ -87,6 +97,8 @@ async function init() {
     view.innerHTML = "<p class='empty'>Keine Stufendaten vorhanden.</p>";
     return;
   }
+
+  applyPinky(pinkyOn());
 
   const ids = meta.cohorts.map((c) => c.id);
   let saved = null;
@@ -234,7 +246,21 @@ function renderHome() {
     `<div class="stufen">${chooser}</div>` +
     `<p class="disclaimer">Privates Projekt, nicht von der Schule und ohne Gewähr. Wenn hier was ` +
     `anderes steht als am Aushang, dann stimmt der Aushang.</p>` +
+    `<button type="button" class="pinky-toggle" id="pinkyBtn"></button>` +
     `</section>`;
+
+  const pb = document.getElementById("pinkyBtn");
+  const setLabel = () => {
+    pb.textContent = pinkyOn() ? "🎀 Pinky-Modus aus" : "🎀 Pinky-Modus an";
+    pb.setAttribute("aria-pressed", pinkyOn() ? "true" : "false");
+  };
+  setLabel();
+  pb.addEventListener("click", () => {
+    const now = !pinkyOn();
+    try { localStorage.setItem("pinky", now ? "1" : "0"); } catch (e) { /* ignore */ }
+    applyPinky(now);
+    setLabel();
+  });
 }
 
 /* -------------------------------------------------------------------- search */

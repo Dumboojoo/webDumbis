@@ -53,6 +53,48 @@
   }
 }
 
+/* 🎀 ============================================ Pinky-Modus (Spielerei) 🎀 */
+/* Attribut-Selektor schlaegt sowohl das helle als auch das dunkle :root. */
+:root[data-pinky] {
+  --accent: #ff1493;
+  --accent-ink: #ffffff;
+  --accent-soft: #ffd9ec;
+
+  --bg: #ffe3f1;
+  --surface: #ffffff;
+  --surface-2: #ffd9ec;
+  --text: #6d1440;
+  --text-soft: #a83a72;
+  --text-faint: #d07aa6;
+  --border: #ffb3d6;
+  --border-strong: #ff8cc4;
+  --free: #ffedf6;
+
+  --lk-bg: #ff1493;
+  --lk-ink: #ffffff;
+  --bk-bg: #ffd0e8;
+  --bk-ink: #b3245f;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow-sm: 0 1px 3px rgba(255, 20, 147, 0.15);
+  --shadow: 0 2px 6px rgba(255, 20, 147, 0.14), 0 12px 28px rgba(255, 20, 147, 0.18);
+  --font: "Chalkboard SE", "Bradley Hand", "Comic Sans MS", "Comic Neue", "Segoe Print", cursive;
+}
+:root[data-pinky] body {
+  background-color: var(--bg);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.55) 1.6px, transparent 1.7px);
+  background-size: 22px 22px;
+}
+:root[data-pinky] .wm-web { color: #ff9ecb; }
+:root[data-pinky] .wm-main { color: var(--accent); }
+:root[data-pinky] .home-title::after { content: " 🎀"; }
+:root[data-pinky] .brand::after { content: " 🎀"; font-size: 0.85em; }
+:root[data-pinky] .badge { border-radius: 8px; }
+:root[data-pinky] #nav a.active { color: var(--accent); }
+:root[data-pinky] .stufe-k,
+:root[data-pinky] .code { color: var(--accent); }
+
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
@@ -338,6 +380,25 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 .stufe-k { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
 .stufe-meta { display: block; margin-top: 0.3rem; color: var(--text-soft); font-size: 0.88rem; }
 .disclaimer { color: var(--text-faint); font-size: 0.83rem; line-height: 1.55; }
+
+.pinky-toggle {
+  margin-top: 1.75rem;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: var(--text-soft);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.pinky-toggle:hover { border-color: var(--accent); color: var(--accent); }
+:root[data-pinky] .pinky-toggle {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: #fff0f7;
+}
 
 /* ----------------------------------------------------------------- factbox */
 .factbox {
