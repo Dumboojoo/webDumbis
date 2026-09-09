@@ -97,51 +97,67 @@ def period_number(pmap, start_dt) -> int:
     return min(same_day, key=lambda x: abs(int(x[1][:2]) * 60 + int(x[1][3:]) - target))[0]
 
 
-def collect(session, klassen_names, subject_map, pmap, weeks_ahead):
-    events: dict[tuple, dict] = {}
+def iter_periods(session, ccfg, weeks_ahead):
+    """Liefert alle Perioden für eine Stufe – entweder je Klasse oder den eigenen Plan."""
     start = monday_of(date.today())
-    for name in klassen_names:
-        matches = session.klassen().filter(name=name)
+    weeks = [(start + timedelta(days=7 * w), start + timedelta(days=7 * w + 4))
+             for w in range(weeks_ahead)]
+
+    if ccfg.get("myTimetable"):
+        for mon, fri in weeks:
+            try:
+                yield from session.my_timetable(start=mon, end=fri)
+            except Exception as e:  # noqa: BLE001
+                print(f"  ! eigener Plan {mon}: {e}")
+        return
+
+    for name in ccfg.get("klassen") or []:
+        try:
+            matches = session.klassen().filter(name=name)
+        except Exception as e:  # noqa: BLE001
+            print(f"  ! Klassenliste nicht abrufbar ({e}). "
+                  f"Ggf. \"myTimetable\": true in der Config nutzen.")
+            return
         if not matches:
             print(f"  ! Klasse '{name}' nicht gefunden – überspringe.")
             continue
         kl = matches[0]
-        for w in range(weeks_ahead):
-            mon = start + timedelta(days=7 * w)
-            fri = mon + timedelta(days=4)
+        for mon, fri in weeks:
             try:
-                periods = session.timetable_extended(klasse=kl, start=mon, end=fri)
+                yield from session.timetable_extended(klasse=kl, start=mon, end=fri)
             except Exception as e:  # noqa: BLE001
-                print(f"  ! {name} {mon}: {e}")
-                continue
-            for p in periods:
-                if p.code not in ("cancelled", "irregular"):
-                    continue
-                subj = ""
-                if p.subjects:
-                    subj = getattr(p.subjects[0], "name", "") or ""
-                subj = subject_map.get(subj, subj) or getattr(p, "studentGroup", "") or "?"
-                teacher = getattr(p.teachers[0], "name", "") if p.teachers else ""
-                orig_t = ""
-                try:
-                    orig_t = getattr(p.original_teachers[0], "name", "") if p.original_teachers else ""
-                except Exception:  # noqa: BLE001
-                    pass
-                room = getattr(p.rooms[0], "name", "") if p.rooms else ""
-                pnum = period_number(pmap, p.start)
-                enum = period_number(pmap, p.end - timedelta(minutes=1)) or pnum
-                ev = {
-                    "date": p.start.date().isoformat(),
-                    "period": pnum,
-                    "endPeriod": max(pnum, enum),
-                    "code": subj,
-                    "type": "ausfall" if p.code == "cancelled" else "vertretung",
-                    "teacher": orig_t or teacher,
-                    "newTeacher": teacher if (orig_t and teacher and teacher != orig_t) else "",
-                    "room": room,
-                    "text": (getattr(p, "substText", "") or getattr(p, "lstext", "") or "").strip(),
-                }
-                events[(ev["date"], ev["period"], ev["code"], ev["type"])] = ev
+                print(f"  ! {name} {mon}: {e}  "
+                      f"(evtl. keine Berechtigung – dann \"myTimetable\": true nutzen)")
+
+
+def collect(session, ccfg, subject_map, pmap, weeks_ahead):
+    events: dict[tuple, dict] = {}
+    for p in iter_periods(session, ccfg, weeks_ahead):
+        if p.code not in ("cancelled", "irregular"):
+            continue
+        subj = getattr(p.subjects[0], "name", "") if p.subjects else ""
+        subj = subject_map.get(subj, subj) or getattr(p, "studentGroup", "") or "?"
+        teacher = getattr(p.teachers[0], "name", "") if p.teachers else ""
+        orig_t = ""
+        try:
+            orig_t = getattr(p.original_teachers[0], "name", "") if p.original_teachers else ""
+        except Exception:  # noqa: BLE001
+            pass
+        room = getattr(p.rooms[0], "name", "") if p.rooms else ""
+        pnum = period_number(pmap, p.start)
+        enum = period_number(pmap, p.end - timedelta(minutes=1)) or pnum
+        ev = {
+            "date": p.start.date().isoformat(),
+            "period": pnum,
+            "endPeriod": max(pnum, enum),
+            "code": subj,
+            "type": "ausfall" if p.code == "cancelled" else "vertretung",
+            "teacher": orig_t or teacher,
+            "newTeacher": teacher if (orig_t and teacher and teacher != orig_t) else "",
+            "room": room,
+            "text": (getattr(p, "substText", "") or getattr(p, "lstext", "") or "").strip(),
+        }
+        events[(ev["date"], ev["period"], ev["code"], ev["type"])] = ev
     return sorted(events.values(), key=lambda e: (e["date"], e["period"], e["code"]))
 
 
@@ -158,9 +174,9 @@ def main():
         print(f"Zeitraster: {len(pmap)} Einträge")
 
         for cid, ccfg in (cfg.get("cohorts") or {}).items():
-            names = ccfg.get("klassen") or []
-            print(f"\n[{cid}] Klassen: {names}")
-            evs = collect(s, names, subject_map, pmap, weeks)
+            src = "eigener Plan" if ccfg.get("myTimetable") else f"Klassen {ccfg.get('klassen') or []}"
+            print(f"\n[{cid}] {src}")
+            evs = collect(s, ccfg, subject_map, pmap, weeks)
             out = DATA_DIR / cid / "events.json"
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(json.dumps({
