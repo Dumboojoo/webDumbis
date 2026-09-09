@@ -349,6 +349,7 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 .crow-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 550; }
 .crow-teacher { flex-shrink: 0; color: var(--text-soft); font-size: 0.86rem; }
 .crow-teacher:hover { color: var(--accent); }
+.crow-teacher-none { font-style: italic; color: var(--text-faint); }
 .crow > .tag { flex-shrink: 0; min-width: 1.5rem; text-align: right; }
 
 /* -------------------------------------------------------------------- home */
@@ -630,6 +631,53 @@ table.tt .desc {
 .tt-what { min-width: 0; }
 .tt-desc { color: var(--text-soft); }
 .tt-teacher { color: var(--text-faint); }
+
+/* ------------------------------------------------ Ausfall / Vertretung (Events) */
+:root {
+  --ev-ausfall: #c02626;
+  --ev-ausfall-bg: #fbe9e9;
+  --ev-vertretung: #b06a00;
+  --ev-vertretung-bg: #fbefdb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ev-ausfall: #ef8f8f;
+    --ev-ausfall-bg: #3a2020;
+    --ev-vertretung: #e6b667;
+    --ev-vertretung-bg: #3a2f18;
+  }
+}
+.ev {
+  display: inline-block;
+  padding: 0.02rem 0.36rem;
+  border-radius: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  vertical-align: 0.08em;
+  white-space: nowrap;
+}
+.ev-ausfall { color: var(--ev-ausfall); background: var(--ev-ausfall-bg); }
+.ev-vertretung { color: var(--ev-vertretung); background: var(--ev-vertretung-bg); }
+
+td.ev-cell.ev-ausfall, .tt-row.ev-ausfall { background: var(--ev-ausfall-bg); }
+td.ev-cell.ev-vertretung, .tt-row.ev-vertretung { background: var(--ev-vertretung-bg); }
+.ev-ausfall .code { text-decoration: line-through; opacity: 0.65; }
+.ev-text { font-style: italic; }
+
+.ev-list { list-style: none; margin: 0.6rem 0 0; padding: 0; }
+.ev-list-item {
+  padding: 0.5rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+.ev-list-item.ev-ausfall { border-left: 3px solid var(--ev-ausfall); }
+.ev-list-item.ev-vertretung { border-left: 3px solid var(--ev-vertretung); }
+.ev-when { color: var(--text-faint); font-variant-numeric: tabular-nums; margin-right: 0.3rem; }
 
 /* ----------------------------------------------------------------- pickers */
 .pickers {

@@ -1,0 +1,14 @@
+{
+  "_comment": "Kopie als build/untis-config.json anlegen und ausfuellen. build/untis-config.json steht in .gitignore und darf NICHT ins Repo.",
+  "server": "xxx.webuntis.com",
+  "school": "Schulname genau wie in der WebUntis-Adresse (?school=...)",
+  "username": "dein-webuntis-login",
+  "password": "dein-passwort",
+  "weeksAhead": 4,
+  "cohorts": {
+    "k1": { "klassen": ["11a", "11b", "11c", "11d"] },
+    "k2": { "klassen": ["K2"] }
+  },
+  "subjectMap_comment": "Nur noetig, wenn WebUntis-Fachkuerzel nicht zu den webDumbis-Kurscodes passen. Beispiel unten: WebUntis 'GK' -> webDumbis 'gk3'.",
+  "subjectMap": {}
+}

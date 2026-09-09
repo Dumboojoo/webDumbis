@@ -1,0 +1,7 @@
+{
+  "_comment": "Lehrkräfte, die im Schul-PDF fehlen und deshalb von Hand nachgetragen werden. Format: { \"<stufe>\": { \"<kurscode>\": \"Frau/Herr Nachname\" } }. Leere Werte werden ignoriert (Kurs bleibt 'ohne Lehrkraft').",
+  "k2": {
+    "gk3": "",
+    "m1": ""
+  }
+}

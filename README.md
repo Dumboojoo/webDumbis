@@ -37,10 +37,12 @@ data/meta.json          Liste der Stufen, Datenstand, offene Punkte
 data/calendar.json      Ferien / Feiertage (von Hand gepflegt)
 data/k1/students.json   Schülerdaten K1     (erzeugt, im Repo)
 data/k1/courses.json    Kursdaten K1
-data/k2/students.json   Schülerdaten K2
-data/k2/courses.json    Kursdaten K2
+data/k1/events.json     Ausfälle / Vertretungen K1 (aus WebUntis, siehe unten)
+data/k2/…               dasselbe für K2
 build/parse_pdfs.py     PDF-Konverter (nur lokal nötig)
 build/subjects.json     Fach-Kürzel → ausgeschriebener Name (von Hand pflegbar)
+build/course-teachers.json  Lehrkräfte, die im PDF fehlen (von Hand nachtragen)
+build/fetch_untis.py    holt Ausfälle aus WebUntis (nur lokal, siehe unten)
 ```
 
 ## Ferien & Feiertage
@@ -56,8 +58,32 @@ Die aktuell hinterlegten Werte sind eine **erste Näherung** – bitte gegen den
 BW-Ferienkalender **und** den Jahresplan der Schule prüfen und die **beweglichen
 Ferientage** ergänzen. Nach dem Ändern einfach `data/calendar.json` committen und pushen.
 
-Als **nächster Schritt** ist eine Datei `data/events.json` geplant (Ausfall,
-Klausurtermine, Notizen pro Datum/Kurs) – ebenfalls von Hand gepflegt und gepusht.
+## Ausfälle aus WebUntis
+
+`data/<stufe>/events.json` enthält Ausfälle und Vertretungen; sie werden im Stundenplan
+angezeigt (durchgestrichen + „entfällt" bzw. „Vertretung"). Gefüllt wird die Datei
+**lokal** mit `build/fetch_untis.py` – nicht automatisch, nicht im Browser (WebUntis
+blockt Cross-Origin, und Zugangsdaten dürfen nicht ins öffentliche Repo).
+
+```
+pip install -r build/requirements.txt
+cp build/untis-config.example.json build/untis-config.json     # dann ausfüllen
+python3 build/fetch_untis.py
+```
+
+- `build/untis-config.json` (Server, Schule, Login, Klassen je Stufe) steht in
+  `.gitignore` und darf **nicht** committet werden.
+- Die Ausgabe zeigt eine Tabelle aller gefundenen Änderungen – prüfen, ob die
+  Fachkürzel zu den webDumbis-Kurscodes passen. Wenn nicht: `subjectMap` in der Config
+  setzen (z. B. `{"GK": "gk3"}`).
+- Passt alles: `data/**/events.json` committen und pushen.
+
+## Fehlende Lehrkräfte
+
+Wenn im Schul-PDF für einen Kurs keine Lehrkraft steht (z. B. K2 `gk3`, `m1`), meldet
+`parse_pdfs.py` das. Echte Namen in `build/course-teachers.json` eintragen
+(`{ "k2": { "gk3": "Frau …" } }`) und `python3 build/parse_pdfs.py` erneut ausführen.
+Solange nichts eingetragen ist, zeigt die Seite „Lehrkraft: noch nicht hinterlegt".
 
 ## Daten aktualisieren
 

@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS_DIR = ROOT / "assets"
 DATA_DIR = ROOT / "data"
 SUBJECTS_FILE = Path(__file__).resolve().parent / "subjects.json"
+TEACHER_OVERRIDE_FILE = Path(__file__).resolve().parent / "course-teachers.json"
 
 DAYS = ["Mo", "Di", "Mi", "Do", "Fr"]
 DAY_HEADERS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"]
@@ -43,6 +44,13 @@ FILE_RE = re.compile(
 def load_subjects() -> dict[str, str]:
     raw = json.loads(SUBJECTS_FILE.read_text(encoding="utf-8"))
     return {k.lower(): v for k, v in raw.items() if not k.startswith("_")}
+
+
+def load_teacher_overrides() -> dict[str, dict[str, str]]:
+    if not TEACHER_OVERRIDE_FILE.exists():
+        return {}
+    raw = json.loads(TEACHER_OVERRIDE_FILE.read_text(encoding="utf-8"))
+    return {k: v for k, v in raw.items() if not k.startswith("_") and isinstance(v, dict)}
 
 
 def discover_cohorts():
@@ -257,10 +265,21 @@ def parse_grid(block, grid_top, grid_bottom, centers, courses, subjects, unknown
 
 
 # --------------------------------------------------------------------------- #
-def process_cohort(cohort: dict, subjects: dict[str, str]) -> dict:
+def process_cohort(cohort: dict, subjects: dict[str, str],
+                   teacher_overrides: dict[str, dict[str, str]]) -> dict:
     courses, unk_c = parse_kurslisten(cohort["kurslisten"], subjects)
     students, valid_from, unk_s, unmatched = parse_stundenplaene(
         cohort["stundenplan"], courses, subjects)
+
+    # Fehlende Lehrkraefte aus build/course-teachers.json nachtragen.
+    override = teacher_overrides.get(cohort["id"], {})
+    missing_teachers = []
+    for code, c in courses.items():
+        if not c["teacher"]:
+            c["teacher"] = (override.get(code) or "").strip()
+        if not c["teacher"]:
+            missing_teachers.append(code)
+    missing_teachers.sort()
 
     out_dir = DATA_DIR / cohort["id"]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -281,7 +300,7 @@ def process_cohort(cohort: dict, subjects: dict[str, str]) -> dict:
         "validFrom": valid_from,
         "studentCount": len(student_list), "courseCount": len(courses),
         "unknown": sorted(unk_c | unk_s), "unmatched": sorted(unmatched),
-        "flagged": flagged, "empty": empty,
+        "flagged": flagged, "empty": empty, "missingTeachers": missing_teachers,
     }
 
 
@@ -292,15 +311,17 @@ def main():
                  f"(erwartet: '<Jahr> - K<n> - Schüler-Stundenpläne.pdf' usw.).")
 
     subjects = load_subjects()
+    teacher_overrides = load_teacher_overrides()
     DATA_DIR.mkdir(exist_ok=True)
     # Alte, nicht mehr genutzte Dateien im data/-Wurzelverzeichnis entfernen.
     for stale in ("students.json", "courses.json"):
         (DATA_DIR / stale).unlink(missing_ok=True)
 
-    results = [process_cohort(c, subjects) for c in cohorts]
+    results = [process_cohort(c, subjects, teacher_overrides) for c in cohorts]
 
     unknown = sorted({u for r in results for u in r["unknown"]})
     flagged = sorted({f for r in results for f in r["flagged"]})
+    missing_teachers = {r["id"]: r["missingTeachers"] for r in results if r["missingTeachers"]}
     meta = {
         "generatedAt": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "cohorts": [
@@ -312,6 +333,7 @@ def main():
         "unknownSubjects": unknown,
         "flaggedSubjects": flagged,
         "unmatchedCourseCodes": {r["id"]: r["unmatched"] for r in results if r["unmatched"]},
+        "missingTeachers": missing_teachers,
     }
     (DATA_DIR / "meta.json").write_text(
         json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -327,6 +349,9 @@ def main():
         print(f"UNBEKANNTE Fach-Kuerzel (in build/subjects.json ergaenzen): {unknown}")
     if flagged:
         print(f"Bitte Fachnamen pruefen (unsicher): {flagged}")
+    if missing_teachers:
+        pairs = ", ".join(f"{cid} {code}" for cid, cs in missing_teachers.items() for code in cs)
+        print(f"Kurse ohne Lehrkraft (in build/course-teachers.json ergaenzen): {pairs}")
 
 
 if __name__ == "__main__":

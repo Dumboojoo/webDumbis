@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-09 17:34 UTC",
+ "generatedAt": "2026-09-09 19:41 UTC",
  "cohorts": [
   {
    "id": "k1",
@@ -25,5 +25,11 @@
   "lth1",
   "rrk1"
  ],
- "unmatchedCourseCodes": {}
+ "unmatchedCourseCodes": {},
+ "missingTeachers": {
+  "k2": [
+   "gk3",
+   "m1"
+  ]
+ }
 }
