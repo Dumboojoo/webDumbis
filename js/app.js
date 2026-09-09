@@ -158,8 +158,11 @@ function renderChrome(activeNav) {
   if (meta.generatedAt) bits.push("Datenstand " + esc(meta.generatedAt));
   sideFoot.innerHTML = bits.join("<br>");
   pageFoot.innerHTML =
-    `<span>webDumbis · inoffiziell, ohne Gewähr – es gilt der offizielle Plan der Schule.</span>` +
-    (info && info.validFrom ? `<span>${esc(info.label)} · Plan gültig ab ${esc(info.validFrom)}</span>` : "");
+    `<span>Privates Projekt, nicht von der Schule. Ohne Gewähr.</span>` +
+    (info && info.validFrom
+      ? `<span>${esc(info.label)} · Plan gültig ab ${esc(info.validFrom)}` +
+        (meta.generatedAt ? ` · Stand ${esc(meta.generatedAt)}` : "") + `</span>`
+      : "");
 }
 
 /* --------------------------------------------------------------------- router */
@@ -222,15 +225,15 @@ function renderHome() {
   view.innerHTML =
     `<section class="home">` +
     `<h1 class="home-title"><span class="wm-web">web</span><span class="wm-main">Dumbis</span></h1>` +
-    `<p class="lead">Die Stundenpläne des Adolf-Schmitthenner-Gymnasiums, ` +
-    `durchsuchbar aufbereitet.</p>` +
-    `<p class="home-text">Die offiziellen Pläne der Kursstufe erscheinen nur als ` +
-    `PDF-Sammlung. webDumbis wertet sie aus: einzelne Stundenpläne, Kurslisten, Lehrkräfte ` +
-    `und die Kurse, die zwei Personen gemeinsam belegen. K1 und K2 sind vollständig getrennt.</p>` +
+    `<p class="lead">Die Schule gibt die Stundenpläne nur als PDF raus. Jedes Mal den ` +
+    `eigenen Plan da rauszusuchen nervt, also habe ich das hier gebaut.</p>` +
+    `<p class="home-text">Namen oder Schülernummer eintippen, dann kommt der Stundenplan. ` +
+    `Man kann auch durch alle Kurse und Lehrkräfte gehen oder zwei Leute vergleichen und sehen, ` +
+    `welche Kurse sie zusammen haben. K1 und K2 laufen getrennt – oben umstellen.</p>` +
     `<h2 class="group-title">Stufe wählen</h2>` +
     `<div class="stufen">${chooser}</div>` +
-    `<p class="disclaimer">Inoffizielles Projekt – keine Seite der Schule und ohne Gewähr. ` +
-    `Verbindlich ist immer der offizielle Plan bzw. Aushang.</p>` +
+    `<p class="disclaimer">Privates Projekt, nicht von der Schule und ohne Gewähr. Wenn hier was ` +
+    `anderes steht als am Aushang, dann stimmt der Aushang.</p>` +
     `</section>`;
 }
 

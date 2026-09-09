@@ -476,25 +476,24 @@ table.tt .desc {
   body { font-size: 15.5px; }
   .layout { display: block; }
 
+  /* Kein backdrop-filter / transform hier: sonst wird das fixe #nav an der
+     Sidebar statt am Viewport ausgerichtet und verdeckt die Kopfzeile. */
   .sidebar {
     width: 100%;
     height: auto;
     flex-direction: row;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.6rem clamp(0.9rem, 4vw, 1.5rem);
+    gap: 0.6rem;
+    padding: 0.55rem clamp(0.9rem, 4vw, 1.5rem);
     border-right: none;
     border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    background: color-mix(in srgb, var(--bg) 90%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: var(--surface);
     z-index: 30;
   }
-  .brand { padding: 0; font-size: 1.15rem; white-space: nowrap; }
+  .brand { padding: 0; font-size: 1.12rem; white-space: nowrap; }
 
-  .cohort-switch { margin: 0 0 0 auto; width: auto; }
-  .cs-btn { padding: 0.3rem 0.6rem; font-size: 0.82rem; }
+  .cohort-switch { margin: 0 0 0 auto; width: auto; flex-shrink: 0; }
+  .cs-btn { padding: 0.4rem 0.7rem; font-size: 0.85rem; min-width: 2.4rem; }
   .cs-abi { display: none; }
 
   #nav {
