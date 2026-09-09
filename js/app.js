@@ -4,6 +4,7 @@ const DAYS = ["Mo", "Di", "Mi", "Do", "Fr"];
 const DAY_LABELS = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag" };
 const MAX_RESULTS = 30;
 const TOP_VIEWS = ["suche", "schueler", "kurse", "gemeinsam", "ausfaelle", "lehrer"];
+const NOCACHE = { cache: "no-cache" };  // Daten immer revalidieren (Korrekturen sofort sichtbar)
 
 const view = document.getElementById("view");
 const navEl = document.getElementById("nav");
@@ -185,8 +186,8 @@ function clampMonday(mon) {
 async function init() {
   try {
     const [m, cal] = await Promise.all([
-      fetch("data/meta.json").then((r) => r.json()),
-      fetch("data/calendar.json").then((r) => r.json()).catch(() => ({ free: [] })),
+      fetch("data/meta.json", NOCACHE).then((r) => r.json()),
+      fetch("data/calendar.json", NOCACHE).then((r) => r.json()).catch(() => ({ free: [] })),
     ]);
     meta = m;
     calendar = cal && Array.isArray(cal.free) ? cal : { free: [] };
@@ -227,7 +228,7 @@ async function init() {
 
   // Welche Stufen haben WebUntis-Ausfälle?
   const srcs = await Promise.all(meta.cohorts.map((c) =>
-    fetch(`data/${c.id}/events.json`, { cache: "no-cache" }).then((r) => r.json()).catch(() => ({}))));
+    fetch(`data/${c.id}/events.json`, NOCACHE).then((r) => r.json()).catch(() => ({}))));
   eventCohorts = meta.cohorts.filter((c, i) => srcs[i] && srcs[i].source).map((c) => c.label);
 
   window.addEventListener("hashchange", route);
@@ -248,11 +249,9 @@ function closeMore() {
 async function loadCohort(id) {
   if (store[id]) return store[id];
   const [sData, cData, eData] = await Promise.all([
-    fetch(`data/${id}/students.json`).then((r) => r.json()),
-    fetch(`data/${id}/courses.json`).then((r) => r.json()),
-    // Ausfälle ändern sich oft -> immer frisch laden (revalidieren).
-    fetch(`data/${id}/events.json`, { cache: "no-cache" }).then((r) => r.json())
-      .catch(() => ({ events: [] })),
+    fetch(`data/${id}/students.json`, NOCACHE).then((r) => r.json()),
+    fetch(`data/${id}/courses.json`, NOCACHE).then((r) => r.json()),
+    fetch(`data/${id}/events.json`, NOCACHE).then((r) => r.json()).catch(() => ({ events: [] })),
   ]);
   const students = sData.students || [];
   const courses = cData.courses || [];
