@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-09-09 19:41 UTC",
+ "generatedAt": "2026-09-09 20:35 UTC",
  "cohorts": [
   {
    "id": "k1",
    "label": "K1",
    "abi": "2028",
-   "validFrom": "2025-09-26",
+   "validFrom": "2026-09-26",
    "studentCount": 89,
    "courseCount": 57
   },
@@ -13,7 +13,7 @@
    "id": "k2",
    "label": "K2",
    "abi": "2027",
-   "validFrom": "2025-09-15",
+   "validFrom": "2026-09-15",
    "studentCount": 103,
    "courseCount": 60
   }

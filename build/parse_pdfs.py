@@ -186,20 +186,32 @@ def parse_stundenplaene(path: Path, courses: dict[str, dict], subjects: dict[str
     return students, valid_from, unknown, unmatched
 
 
+MONTHS_DE = {"Januar": 1, "Februar": 2, "März": 3, "April": 4, "Mai": 5, "Juni": 6,
+             "Juli": 7, "August": 8, "September": 9, "Oktober": 10, "November": 11,
+             "Dezember": 12}
+
+
 def extract_valid_from(words):
     line = sorted((w for w in words if 80 < w["top"] < 95 and w["x0"] > 400),
                   key=lambda w: w["x0"])
-    txt = " ".join(w["text"] for w in line)
-    m = re.search(r"(\d{1,2})\.\s*(\w+)\s*(\d{4})", txt)
+    m = re.search(r"(\d{1,2})\.\s*(\w+)\s*(\d{4})", " ".join(w["text"] for w in line))
     if not m:
         return ""
-    months = {"Januar": 1, "Februar": 2, "März": 3, "April": 4, "Mai": 5, "Juni": 6,
-              "Juli": 7, "August": 8, "September": 9, "Oktober": 10, "November": 11,
-              "Dezember": 12}
-    mon = months.get(m.group(2))
+    mon = MONTHS_DE.get(m.group(2))
     if not mon:
-        return txt
-    return f"{m.group(3)}-{mon:02d}-{int(m.group(1)):02d}"
+        return ""
+    day, year = int(m.group(1)), int(m.group(3))
+
+    # WinProsa traegt in der "gültig ab"-Zeile oft ein altes Jahr ein. Das Druckdatum
+    # (oben rechts, TT.MM.JJJJ) ist verlaesslicher: ein im August gedruckter Plan gilt
+    # ab dem Schuljahr, das dann beginnt.
+    pm = re.search(r"\b(\d{2})\.(\d{2})\.(\d{4})\b",
+                   " ".join(w["text"] for w in words if w["top"] < 55 and w["x0"] > 400))
+    if pm:
+        print_month, print_year = int(pm.group(2)), int(pm.group(3))
+        year = print_year if mon >= print_month else print_year + 1
+
+    return f"{year}-{mon:02d}-{day:02d}"
 
 
 def parse_student_header(block, grid_top):
