@@ -85,10 +85,93 @@ function applyPinky(on) {
   if (tc) tc.setAttribute("content", on ? "#ff1493" : "#1f3a68");
 }
 
+/* ------------------------------------------------------------ Datum / Wochen */
+const MONTHS_SHORT = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.",
+  "Sept.", "Okt.", "Nov.", "Dez."];
+const MONTHS_LONG = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli",
+  "August", "September", "Oktober", "November", "Dezember"];
+
+function parseISO(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || "");
+  return m ? new Date(+m[1], +m[2] - 1, +m[3], 12) : null;
+}
+function isoDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-` +
+    `${String(d.getDate()).padStart(2, "0")}`;
+}
+function addDays(d, n) {
+  const x = new Date(d);
+  x.setDate(x.getDate() + n);
+  return x;
+}
+function mondayOf(d) {
+  return addDays(d, -((d.getDay() + 6) % 7));
+}
+function sameISO(a, b) { return isoDate(a) === isoDate(b); }
+const pad2 = (n) => String(n).padStart(2, "0");
+
+function isoWeekNum(d) {
+  const t = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  t.setDate(t.getDate() + 4 - (t.getDay() || 7));
+  const yearStart = new Date(t.getFullYear(), 0, 1);
+  return Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+}
+function fmtD(d) { return `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.`; }
+
+function fmtWeekLabel(mon) {
+  const fri = addDays(mon, 4);
+  const range = mon.getMonth() === fri.getMonth()
+    ? `${mon.getDate()}.–${fri.getDate()}. ${MONTHS_SHORT[fri.getMonth()]}`
+    : `${mon.getDate()}. ${MONTHS_SHORT[mon.getMonth()]} – ${fri.getDate()}. ${MONTHS_SHORT[fri.getMonth()]}`;
+  return `${range} ${fri.getFullYear()} · KW ${isoWeekNum(mon)}`;
+}
+
+/* Ferien / Feiertage (data/calendar.json) */
+let calendar = { free: [] };
+
+function freeOn(d) {
+  const iso = isoDate(d);
+  for (const e of calendar.free || []) {
+    const from = e.from || e.date;
+    const to = e.to || e.date;
+    if (from && to && iso >= from && iso <= to) return { label: e.label || "unterrichtsfrei" };
+  }
+  return null;
+}
+function weekFullyFree(mon) {
+  const labels = [];
+  for (let i = 0; i < 5; i++) {
+    const f = freeOn(addDays(mon, i));
+    if (!f) return null;
+    labels.push(f.label);
+  }
+  // häufigstes Label zurückgeben
+  const count = {};
+  let best = labels[0];
+  for (const l of labels) { count[l] = (count[l] || 0) + 1; if (count[l] > (count[best] || 0)) best = l; }
+  return best;
+}
+function schoolBounds() {
+  const lo = parseISO(calendar.schoolYearStart) || new Date(2000, 0, 1, 12);
+  const hi = parseISO(calendar.schoolYearEnd) || new Date(2100, 0, 1, 12);
+  return [mondayOf(lo), mondayOf(hi)];
+}
+function clampMonday(mon) {
+  const [lo, hi] = schoolBounds();
+  if (mon < lo) return lo;
+  if (mon > hi) return hi;
+  return mon;
+}
+
 /* ----------------------------------------------------------------------- init */
 async function init() {
   try {
-    meta = await fetch("data/meta.json").then((r) => r.json());
+    const [m, cal] = await Promise.all([
+      fetch("data/meta.json").then((r) => r.json()),
+      fetch("data/calendar.json").then((r) => r.json()).catch(() => ({ free: [] })),
+    ]);
+    meta = m;
+    calendar = cal && Array.isArray(cal.free) ? cal : { free: [] };
   } catch (e) {
     view.innerHTML = "<p class='empty'>Daten konnten nicht geladen werden.</p>";
     return;
@@ -199,6 +282,7 @@ async function route() {
   const v = parts[1] || "suche";
   const a = parts[2];
   const b = parts[3];
+  const week = parts[3] === "w" && parseISO(parts[4]) ? parts[4] : null;
 
   try {
     cur = await loadCohort(cohortId);
@@ -215,7 +299,7 @@ async function route() {
     case "kurse": renderCourseList(); break;
     case "gemeinsam": renderShared(a, b); break;
     case "lehrer": renderTeacherList(); break;
-    case "s": renderStudent(a); activeNav = "schueler"; break;
+    case "s": renderStudent(a, week); activeNav = "schueler"; break;
     case "k": renderCourse(a); activeNav = "kurse"; break;
     case "l": renderTeacher(a); activeNav = "lehrer"; break;
     default: renderSearch(); activeNav = "suche";
@@ -397,12 +481,14 @@ function renderTeacher(name) {
 }
 
 /* --------------------------------------------------------- student profile */
-function renderStudent(nr) {
+function renderStudent(nr, weekParam) {
   const s = cur.byNr.get(nr);
   if (!s) return notFound("schueler", "Schüler/innen", "Unbekannte Schülernummer.");
   const maxP = lastUsedPeriod(s.timetable);
   const grp = groupLabel(s.klasse);
-  const today = todayDayIndex();
+  const curMon = mondayOf(new Date());
+  const start = weekParam && parseISO(weekParam) ? mondayOf(parseISO(weekParam)) : curMon;
+  let week = clampMonday(start);
 
   view.innerHTML =
     backlink("schueler", "Schüler/innen") +
@@ -410,38 +496,86 @@ function renderStudent(nr) {
     `<p class="sub">${esc(cur.info.label)} · Nr. ${esc(s.nr)}` +
     (grp ? ` · ${esc(grp)}` : "") +
     ` · <a href="${L("gemeinsam", s.nr)}">gemeinsame Kurse suchen</a></p>` +
-    // Desktop: ganze Woche als Raster
-    `<div class="grid-wrap">${timetableTable(s, maxP)}</div>` +
-    // Handy: ein Tag, per Tab wählbar (Start: heute)
-    `<div class="tt-mobile">` +
-    `<div class="tt-tabs" role="tablist">` +
-    DAYS.map((d, i) =>
-      `<button type="button" class="tt-tab${i === today ? " today" : ""}" ` +
-      `data-day="${i}" role="tab" aria-selected="false">${d}</button>`).join("") +
-    `</div><div class="tt-day-view" id="ttDayView"></div></div>`;
+    `<div id="ttWeek"></div>`;
 
-  const tabs = [...view.querySelectorAll(".tt-tab")];
-  const dv = document.getElementById("ttDayView");
-  const show = (i) => {
-    tabs.forEach((t, j) => {
-      t.classList.toggle("active", j === i);
-      t.setAttribute("aria-selected", j === i ? "true" : "false");
-    });
-    dv.innerHTML = dayViewHtml(s, i, maxP, today);
+  const box = document.getElementById("ttWeek");
+  const [lo, hi] = schoolBounds();
+
+  const paint = () => {
+    const isCurrent = sameISO(week, curMon);
+    const dates = [0, 1, 2, 3, 4].map((i) => addDays(week, i));
+    const todayIdx = isCurrent
+      ? [0, 1, 2, 3, 4].find((i) => sameISO(dates[i], new Date()))
+      : undefined;
+
+    const nav =
+      `<div class="week-nav">` +
+      `<button type="button" class="week-btn" data-go="-1"${week <= lo ? " disabled" : ""} ` +
+      `aria-label="vorige Woche">‹</button>` +
+      `<span class="week-label">${esc(fmtWeekLabel(week))}</span>` +
+      `<button type="button" class="week-btn" data-go="1"${week >= hi ? " disabled" : ""} ` +
+      `aria-label="nächste Woche">›</button>` +
+      (isCurrent ? "" : `<button type="button" class="week-btn week-today" data-go="0">Diese Woche</button>`) +
+      `</div>`;
+
+    const fullFree = weekFullyFree(week);
+    let bodyHtml;
+    if (fullFree) {
+      bodyHtml = `<div class="ferien-banner">🌴 <b>${esc(fullFree)}</b>` +
+        `<span>In dieser Woche ist unterrichtsfrei.</span></div>`;
+    } else {
+      const frees = dates.map(freeOn);
+      const notes = dates.map((dt, i) => frees[i]
+        ? `<li>${DAYS[i]} ${fmtD(dt)} — ${esc(frees[i].label)} (unterrichtsfrei)</li>` : "")
+        .filter(Boolean).join("");
+      bodyHtml =
+        `<div class="grid-wrap">${timetableTable(s, maxP, dates, frees, todayIdx)}</div>` +
+        (notes ? `<ul class="tt-footnote">${notes}</ul>` : "") +
+        `<div class="tt-mobile"><div class="tt-tabs" role="tablist">` +
+        DAYS.map((d, i) =>
+          `<button type="button" class="tt-tab${i === todayIdx ? " today" : ""}` +
+          `${frees[i] ? " free" : ""}" data-day="${i}" role="tab" aria-selected="false">` +
+          `<span>${d}</span><span class="tt-tabdate">${fmtD(dates[i])}</span></button>`).join("") +
+        `</div><div class="tt-day-view" id="ttDayView"></div></div>`;
+    }
+
+    box.innerHTML = nav + bodyHtml;
+
+    box.querySelectorAll(".week-btn").forEach((b) => b.addEventListener("click", () => {
+      const go = +b.dataset.go;
+      week = go === 0 ? curMon : clampMonday(addDays(week, go * 7));
+      history.replaceState(null, "",
+        sameISO(week, curMon) ? L("s", nr) : L("s", nr, "w", isoDate(week)));
+      paint();
+      box.scrollIntoView({ block: "nearest" });
+    }));
+
+    if (fullFree) return;
+
+    const tabs = [...box.querySelectorAll(".tt-tab")];
+    const dv = document.getElementById("ttDayView");
+    const showDay = (i) => {
+      tabs.forEach((t, j) => {
+        t.classList.toggle("active", j === i);
+        t.setAttribute("aria-selected", j === i ? "true" : "false");
+      });
+      dv.innerHTML = dayViewHtml(s, i, maxP, dates, todayIdx);
+    };
+    tabs.forEach((t, i) => t.addEventListener("click", () => showDay(i)));
+    showDay(todayIdx != null ? todayIdx : 0);
   };
-  tabs.forEach((t, i) => t.addEventListener("click", () => show(i)));
-  show(today);
+
+  paint();
 }
 
-function todayDayIndex() {
-  const d = new Date().getDay();          // 0 = So … 6 = Sa
-  return d >= 1 && d <= 5 ? d - 1 : 0;    // am Wochenende: Montag
-}
-
-function dayViewHtml(s, di, maxP, today) {
+function dayViewHtml(s, di, maxP, dates, todayIdx) {
   const d = DAYS[di];
-  const head = `<h3 class="tt-dayname">${DAY_LABELS[d]}` +
-    (di === today ? ` <span class="tt-heute">heute</span>` : "") + `</h3>`;
+  const dt = dates[di];
+  const head = `<h3 class="tt-dayname">${DAY_LABELS[d]}, ${dt.getDate()}. ${MONTHS_LONG[dt.getMonth()]}` +
+    (di === todayIdx ? ` <span class="tt-heute">heute</span>` : "") + `</h3>`;
+  const free = freeOn(dt);
+  if (free) return head + `<p class="tt-none">${esc(free.label)} — unterrichtsfrei</p>`;
+
   const blocks = dayBlocks(s.timetable[d] || [], maxP);
   if (!blocks.length) return head + `<p class="tt-none">unterrichtsfrei</p>`;
 
@@ -463,12 +597,16 @@ function dayViewHtml(s, di, maxP, today) {
   return head + `<ul class="tt-rows">${items}</ul>`;
 }
 
-function timetableTable(s, maxP) {
-  const head = DAYS.map((d) => `<th scope="col">${DAY_LABELS[d]}</th>`).join("");
+function timetableTable(s, maxP, dates, frees, todayIdx) {
+  const head = DAYS.map((d, i) =>
+    `<th scope="col"${i === todayIdx ? ' class="today"' : ""}>${DAY_LABELS[d]}` +
+    `<span class="th-date">${fmtD(dates[i])}</span></th>`).join("");
   let rows = "";
   for (let p = 1; p <= maxP; p++) {
     let cells = "";
-    for (const d of DAYS) cells += cellHtml((s.timetable[d] || [])[p - 1]);
+    for (let i = 0; i < DAYS.length; i++) {
+      cells += frees[i] ? `<td class="free"></td>` : cellHtml((s.timetable[DAYS[i]] || [])[p - 1]);
+    }
     rows += `<tr><th scope="row">${p}.</th>${cells}</tr>`;
   }
   return `<table class="tt"><thead><tr><th><span class="vh">Stunde</span></th>${head}</tr></thead>` +

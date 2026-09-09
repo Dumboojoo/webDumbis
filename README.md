@@ -16,10 +16,13 @@ Startseite. Ansichten je Stufe:
 - **Lehrkräfte** – Liste aller Lehrkräfte, führt zu „alle Kurse dieser Lehrkraft".
 
 Im Stundenplan sind die Kurskürzel anklickbar; Lehrkräfte verlinken auf ihre Kursübersicht.
+Über dem Stundenplan lässt sich zwischen **Kalenderwochen** blättern (echte Datumsangaben,
+„heute" datumsgenau); Ferien-/Feiertagswochen werden als solche markiert.
 
 Direktlinks (mit Stufe `k1`/`k2` als erstem Segment):
-`#/k1/s/<nummer>` (Schülerprofil), `#/k2/k/<code>` (Kursprofil),
-`#/k1/l/<lehrkraft>` (Lehrkraft), `#/k2/gemeinsam/<nr1>/<nr2>` (gemeinsame Kurse).
+`#/k1/s/<nummer>` (Schülerprofil), `#/k1/s/<nummer>/w/<YYYY-MM-DD>` (bestimmte Woche,
+Datum = Montag), `#/k2/k/<code>` (Kursprofil), `#/k1/l/<lehrkraft>` (Lehrkraft),
+`#/k2/gemeinsam/<nr1>/<nr2>` (gemeinsame Kurse).
 Links ohne Stufe (`#/kurse`) landen automatisch in der zuletzt gewählten Stufe.
 
 Reines HTML/CSS/JavaScript – **kein Backend**, direkt über GitHub Pages hostbar.
@@ -31,6 +34,7 @@ index.html             Seite
 css/style.css           Styling
 js/app.js               Routing, Suche, Anzeige
 data/meta.json          Liste der Stufen, Datenstand, offene Punkte
+data/calendar.json      Ferien / Feiertage (von Hand gepflegt)
 data/k1/students.json   Schülerdaten K1     (erzeugt, im Repo)
 data/k1/courses.json    Kursdaten K1
 data/k2/students.json   Schülerdaten K2
@@ -38,6 +42,22 @@ data/k2/courses.json    Kursdaten K2
 build/parse_pdfs.py     PDF-Konverter (nur lokal nötig)
 build/subjects.json     Fach-Kürzel → ausgeschriebener Name (von Hand pflegbar)
 ```
+
+## Ferien & Feiertage
+
+`data/calendar.json` steuert, welche Tage/Wochen als unterrichtsfrei angezeigt werden.
+
+- `schoolYearStart` / `schoolYearEnd` – Grenzen für das Wochen-Blättern.
+- `free` – Liste von Einträgen, je entweder ein Zeitraum
+  `{ "from": "YYYY-MM-DD", "to": "YYYY-MM-DD", "label": "…" }` oder ein Einzeltag
+  `{ "date": "YYYY-MM-DD", "label": "…" }`.
+
+Die aktuell hinterlegten Werte sind eine **erste Näherung** – bitte gegen den offiziellen
+BW-Ferienkalender **und** den Jahresplan der Schule prüfen und die **beweglichen
+Ferientage** ergänzen. Nach dem Ändern einfach `data/calendar.json` committen und pushen.
+
+Als **nächster Schritt** ist eine Datei `data/events.json` geplant (Ausfall,
+Klausurtermine, Notizen pro Datum/Kurs) – ebenfalls von Hand gepflegt und gepusht.
 
 ## Daten aktualisieren
 
