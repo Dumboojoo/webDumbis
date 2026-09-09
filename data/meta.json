@@ -1,0 +1,29 @@
+{
+ "generatedAt": "2026-09-09 17:34 UTC",
+ "cohorts": [
+  {
+   "id": "k1",
+   "label": "K1",
+   "abi": "2028",
+   "validFrom": "2025-09-26",
+   "studentCount": 89,
+   "courseCount": 57
+  },
+  {
+   "id": "k2",
+   "label": "K2",
+   "abi": "2027",
+   "validFrom": "2025-09-15",
+   "studentCount": 103,
+   "courseCount": 60
+  }
+ ],
+ "unknownSubjects": [],
+ "flaggedSubjects": [
+  "bll1",
+  "bll2",
+  "lth1",
+  "rrk1"
+ ],
+ "unmatchedCourseCodes": {}
+}
