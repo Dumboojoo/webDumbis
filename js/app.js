@@ -3,7 +3,7 @@
 const DAYS = ["Mo", "Di", "Mi", "Do", "Fr"];
 const DAY_LABELS = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag" };
 const MAX_RESULTS = 30;
-const TOP_VIEWS = ["suche", "schueler", "kurse", "gemeinsam", "ausfaelle", "lehrer"];
+const TOP_VIEWS = ["suche", "schueler", "kurse", "gemeinsam", "ferien", "lehrer"];
 const NOCACHE = { cache: "no-cache" };  // Daten immer revalidieren (Korrekturen sofort sichtbar)
 
 const view = document.getElementById("view");
@@ -26,8 +26,11 @@ const ICONS = {
   venn: I(`<circle cx="9.5" cy="12" r="5.7"/><circle cx="14.5" cy="12" r="5.7"/>`),
   cap: I(`<path d="M12 4.5 2.5 9 12 13.5 21.5 9 12 4.5Z"/>` +
     `<path d="M6.5 11.3V16c0 1.6 2.5 3 5.5 3s5.5-1.4 5.5-3v-4.7"/><line x1="21.5" y1="9" x2="21.5" y2="13.5"/>`),
-  alert: I(`<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>` +
-    `<line x1="12" y1="9" x2="12" y2="13.5"/><line x1="12" y1="17" x2="12.01" y2="17"/>`),
+  sun: I(`<circle cx="12" cy="12" r="4.2"/><line x1="12" y1="3" x2="12" y2="5.2"/>` +
+    `<line x1="12" y1="18.8" x2="12" y2="21"/><line x1="3" y1="12" x2="5.2" y2="12"/>` +
+    `<line x1="18.8" y1="12" x2="21" y2="12"/><line x1="5.6" y1="5.6" x2="7.1" y2="7.1"/>` +
+    `<line x1="16.9" y1="16.9" x2="18.4" y2="18.4"/><line x1="5.6" y1="18.4" x2="7.1" y2="16.9"/>` +
+    `<line x1="16.9" y1="7.1" x2="18.4" y2="5.6"/>`),
   more: I(`<circle cx="5" cy="12" r="1.5" fill="currentColor"/>` +
     `<circle cx="12" cy="12" r="1.5" fill="currentColor"/>` +
     `<circle cx="19" cy="12" r="1.5" fill="currentColor"/>`),
@@ -37,7 +40,7 @@ const NAV = [
   { id: "schueler", label: "Schüler/innen", short: "Schüler", icon: "users", where: "both" },
   { id: "kurse", label: "Kurse", short: "Kurse", icon: "book", where: "both" },
   { id: "gemeinsam", label: "Gemeinsame Kurse", short: "Gemeinsam", icon: "venn", where: "both" },
-  { id: "ausfaelle", label: "Ausfälle", short: "Ausfälle", icon: "alert", where: "more" },
+  { id: "ferien", label: "Ferien", short: "Ferien", icon: "sun", where: "more" },
   { id: "lehrer", label: "Lehrkräfte", short: "Lehrer", icon: "cap", where: "more" },
 ];
 // "more"-Einträge stehen am Desktop in der Seitenleiste, am Handy im "Mehr"-Menü.
@@ -45,8 +48,8 @@ const MORE_NAV = NAV.filter((n) => n.where === "more").map((n) => n.id);
 
 /* Kleiner Änderungs-Log für die Startseite – neuste zuerst, von Hand pflegen. */
 const CHANGELOG = [
-  ["09.09.", "Eigene Ansicht für Ausfälle; entfallene Stunden knallrot im Plan"],
-  ["09.09.", "Ausfälle & Vertretungen aus WebUntis"],
+  ["09.09.", "Neuer Reiter „Ferien“ mit allen Ferien und Feiertagen"],
+  ["09.09.", "Startet jetzt hell, Dunkelmodus per Schalter"],
   ["09.09.", "Zwischen Wochen wechseln – mit Datum und Ferien"],
   ["09.09.", "Stundenplan am Handy: ein Tag pro Ansicht"],
   ["09.09.", "K1 und K2 getrennt, Pinky-Modus"],
@@ -57,7 +60,6 @@ let meta = null;
 let cohortId = null;
 const store = {};   // id -> built cohort data
 let cur = null;     // active cohort data
-let eventCohorts = [];   // Stufen-Labels mit WebUntis-Anbindung (für die Ausfälle-Ansicht)
 
 /* -------------------------------------------------------------------- helpers */
 function norm(s) {
@@ -232,11 +234,6 @@ async function init() {
   document.getElementById("moreSheet").addEventListener("click", () => closeMore());
   document.addEventListener("click", closeMore);
 
-  // Welche Stufen haben WebUntis-Ausfälle?
-  const srcs = await Promise.all(meta.cohorts.map((c) =>
-    fetch(`data/${c.id}/events.json`, NOCACHE).then((r) => r.json()).catch(() => ({}))));
-  eventCohorts = meta.cohorts.filter((c, i) => srcs[i] && srcs[i].source).map((c) => c.label);
-
   window.addEventListener("hashchange", route);
   route();
 }
@@ -254,10 +251,9 @@ function closeMore() {
 
 async function loadCohort(id) {
   if (store[id]) return store[id];
-  const [sData, cData, eData] = await Promise.all([
+  const [sData, cData] = await Promise.all([
     fetch(`data/${id}/students.json`, NOCACHE).then((r) => r.json()),
     fetch(`data/${id}/courses.json`, NOCACHE).then((r) => r.json()),
-    fetch(`data/${id}/events.json`, NOCACHE).then((r) => r.json()).catch(() => ({ events: [] })),
   ]);
   const students = sData.students || [];
   const courses = cData.courses || [];
@@ -282,16 +278,8 @@ async function loadCohort(id) {
   const subjectsOrdered = [...bySubject.entries()].sort((a, b) => deCmp(a[0], b[0]));
   for (const [, arr] of subjectsOrdered) arr.sort(courseSort);
 
-  const eventsByDate = new Map();
-  for (const ev of (eData && eData.events) || []) {
-    if (!ev || !ev.date) continue;
-    (eventsByDate.get(ev.date) || eventsByDate.set(ev.date, []).get(ev.date)).push(ev);
-  }
-
   store[id] = {
     id, students, courses, byNr, byCode, studentCodes, coursesByTeacher, subjectsOrdered,
-    eventsByDate,
-    eventsMeta: { source: (eData && eData.source) || "", generatedAt: (eData && eData.generatedAt) || "" },
     info: cohortInfo(id),
   };
   return store[id];
@@ -367,7 +355,7 @@ async function route() {
     case "schueler": renderStudentList(); break;
     case "kurse": renderCourseList(); break;
     case "gemeinsam": renderShared(a, b); break;
-    case "ausfaelle": renderAusfaelle(); break;
+    case "ferien": renderFerien(); break;
     case "lehrer": renderTeacherList(); break;
     case "s": renderStudent(a, week); activeNav = "schueler"; break;
     case "k": renderCourse(a); activeNav = "kurse"; break;
@@ -569,52 +557,72 @@ function renderTeacher(name) {
     `<ul class="list">${list.map((c) => courseRow(c, { teacher: false })).join("")}</ul>`;
 }
 
-/* ------------------------------------------------------------ Ausfälle-Ansicht */
-function eventLineHtml(ev) {
-  const c = cur.byCode.get(ev.code);
-  const p = c ? parseLabel(c.label, c.code) : { code: ev.code, desc: "" };
-  const when = ev.endPeriod > ev.period ? `${ev.period}.–${ev.endPeriod}.` : `${ev.period}.`;
-  const codeHtml = c
-    ? `<a class="code" href="${L("k", ev.code)}">${esc(p.code)}</a>`
-    : `<span class="code">${esc(ev.code)}</span>`;
-  return `<li class="ev-list-item ev-${ev.type}"><span class="ev-when">${when} Std</span> ` +
-    `${codeHtml}${p.desc ? ` <span class="ev-sub">${esc(p.desc)}</span>` : ""} ` +
-    `<span class="ev ev-${ev.type}">${ev.type === "ausfall" ? "entfällt" : "Vertretung"}</span>` +
-    (ev.type === "vertretung" && ev.newTeacher ? ` <span class="ev-sub">→ ${esc(ev.newTeacher)}</span>` : "") +
-    (ev.room ? ` <span class="ev-sub">${esc(ev.room)}</span>` : "") +
-    (ev.text ? ` <span class="ev-text">${esc(ev.text)}</span>` : "") + `</li>`;
+/* -------------------------------------------------------------- Ferien-Ansicht */
+function schoolYearLabel() {
+  const a = parseISO(calendar.schoolYearStart);
+  const b = parseISO(calendar.schoolYearEnd);
+  if (!a || !b) return "";
+  return `${a.getFullYear()}/${String(b.getFullYear()).slice(-2)}`;
 }
 
-function renderAusfaelle() {
-  if (!cur.eventsMeta.source) {
-    const others = eventCohorts.filter((l) => l !== cur.info.label);
-    view.innerHTML =
-      `<h1>Ausfälle</h1>` +
-      `<p class="empty">Für ${esc(cur.info.label)} werden gerade keine Ausfälle ausgelesen` +
-      (others.length ? ` – aktuell nur ${esc(others.join(", "))}.` : ".") + `</p>`;
-    return;
+function fmtFreeRange(from, to) {
+  const a = parseISO(from);
+  const b = parseISO(to);
+  if (!a) return from;
+  if (!b || from === to) {
+    return `${a.getDate()}. ${MONTHS_LONG[a.getMonth()]} ${a.getFullYear()}`;
   }
+  if (a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth()) {
+    return `${a.getDate()}.–${b.getDate()}. ${MONTHS_LONG[b.getMonth()]} ${b.getFullYear()}`;
+  }
+  if (a.getFullYear() === b.getFullYear()) {
+    return `${a.getDate()}. ${MONTHS_LONG[a.getMonth()]} – ` +
+      `${b.getDate()}. ${MONTHS_LONG[b.getMonth()]} ${b.getFullYear()}`;
+  }
+  return `${a.getDate()}. ${MONTHS_LONG[a.getMonth()]} ${a.getFullYear()} – ` +
+    `${b.getDate()}. ${MONTHS_LONG[b.getMonth()]} ${b.getFullYear()}`;
+}
+
+const WEEKDAYS_LONG = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag",
+  "Freitag", "Samstag"];
+
+function renderFerien() {
+  const entries = (calendar.free || [])
+    .map((e) => ({
+      from: e.from || e.date,
+      to: e.to || e.date,
+      label: e.label || "unterrichtsfrei",
+    }))
+    .filter((e) => e.from && e.to)
+    .sort((a, b) => a.from.localeCompare(b.from));
 
   const today = isoDate(new Date());
-  const days = [...cur.eventsByDate.entries()]
-    .filter(([d]) => d >= today)
-    .sort((a, b) => a[0].localeCompare(b[0]));
+  const rows = entries.map((e) => {
+    const single = e.from === e.to;
+    const past = e.to < today;
+    const now = e.from <= today && today <= e.to;
+    const a = parseISO(e.from);
+    const b = parseISO(e.to);
+    const days = a && b ? Math.round((b - a) / 86400000) + 1 : 0;
+    const side = single
+      ? (a ? WEEKDAYS_LONG[a.getDay()] : "")
+      : `${days} Tage`;
+    return `<li class="ferien-row${past ? " is-past" : ""}${now ? " is-now" : ""}">` +
+      `<span class="ferien-label">${esc(e.label)}` +
+      (now ? ` <span class="ferien-now">gerade</span>` : "") + `</span>` +
+      `<span class="ferien-date">${esc(fmtFreeRange(e.from, e.to))}</span>` +
+      `<span class="ferien-meta">${esc(side)}</span></li>`;
+  }).join("");
 
-  let body = "";
-  for (const [d, evs] of days) {
-    const dt = parseISO(d);
-    body += `<h2 class="group-title">${DAY_LABELS[DAYS[(dt.getDay() + 6) % 7]] || ""}, ` +
-      `${dt.getDate()}. ${MONTHS_SHORT[dt.getMonth()]}</h2>` +
-      `<ul class="ev-list">` +
-      [...evs].sort((a, b) => a.period - b.period).map(eventLineHtml).join("") + `</ul>`;
-  }
-
+  const yr = schoolYearLabel();
   view.innerHTML =
-    `<h1>Ausfälle</h1>` +
-    `<p class="sub">${esc(cur.info.label)}` +
-    (cur.eventsMeta.generatedAt ? ` · Stand ${esc(cur.eventsMeta.generatedAt)}` : "") +
-    ` · aus WebUntis</p>` +
-    (body || `<p class="empty">Aktuell keine Ausfälle im ausgelesenen Zeitraum.</p>`);
+    `<h1>Ferien &amp; Feiertage</h1>` +
+    `<p class="sub">Baden-Württemberg${yr ? ` · Schuljahr ${esc(yr)}` : ""}</p>` +
+    (rows
+      ? `<ul class="ferien-list">${rows}</ul>`
+      : `<p class="empty">Noch keine Ferien hinterlegt.</p>`) +
+    `<p class="disclaimer">Ohne Gewähr. Die beweglichen Ferientage der Schule fehlen ` +
+    `hier vielleicht noch – im Zweifel gilt der Jahresplan der Schule.</p>`;
 }
 
 /* --------------------------------------------------------- student profile */
@@ -705,25 +713,9 @@ function renderStudent(nr, weekParam) {
   paint();
 }
 
-/* Findet ein WebUntis-Event (Ausfall/Vertretung) für Datum + Kurscode + Stundenbereich. */
-function eventFor(dateISO, code, pFrom, pTo) {
-  if (!code || !cur.eventsByDate) return null;
-  const list = cur.eventsByDate.get(dateISO);
-  if (!list) return null;
-  const nc = norm(code);
-  return list.find((ev) => norm(ev.code) === nc &&
-    (ev.period || 1) <= pTo && (ev.endPeriod || ev.period || 10) >= pFrom) || null;
-}
-const evChip = (ev) => ` <span class="ev ev-${ev.type}">${ev.type === "ausfall" ? "entfällt" : "Vertretung"}</span>`;
-const evChange = (ev) => ev.type === "vertretung"
-  ? (ev.newTeacher ? ` <span class="teacher">→ ${esc(ev.newTeacher)}</span>` : "") +
-    (ev.room ? ` <span class="teacher">${esc(ev.room)}</span>` : "")
-  : "";
-
 function dayViewHtml(s, di, maxP, dates, todayIdx) {
   const d = DAYS[di];
   const dt = dates[di];
-  const dISO = isoDate(dt);
   const head = `<h3 class="tt-dayname">${DAY_LABELS[d]}, ${dt.getDate()}. ${MONTHS_LONG[dt.getMonth()]}` +
     (di === todayIdx ? ` <span class="tt-heute">heute</span>` : "") + `</h3>`;
   const free = freeOn(dt);
@@ -739,23 +731,19 @@ function dayViewHtml(s, di, maxP, dates, todayIdx) {
         `<span class="tt-what">frei</span></li>`;
     }
     const info = parseLabel(b.cell.label, b.cell.code);
-    const ev = eventFor(dISO, b.cell.code, b.from, b.to);
     const code = cur.byCode.has(b.cell.code)
       ? `<a class="code" href="${L("k", b.cell.code)}">${esc(info.code)}</a>`
       : `<span class="code">${esc(info.code)}</span>`;
-    return `<li class="tt-row${ev ? " ev-" + ev.type : ""}"><span class="tt-when">${when}</span>` +
-      `<span class="tt-what">${code}${ev ? evChip(ev) : ""}` +
+    return `<li class="tt-row"><span class="tt-when">${when}</span>` +
+      `<span class="tt-what">${code}` +
       `${info.desc ? ` <span class="tt-desc">${esc(info.desc)}</span>` : ""}` +
       `${b.cell.teacher ? ` <span class="tt-teacher">· ${esc(b.cell.teacher)}</span>` : ""}` +
-      `${ev ? evChange(ev) : ""}` +
-      `${ev && ev.text ? ` <span class="tt-desc ev-text">${esc(ev.text)}</span>` : ""}` +
       `</span></li>`;
   }).join("");
   return head + `<ul class="tt-rows">${items}</ul>`;
 }
 
 function timetableTable(s, maxP, dates, frees, todayIdx) {
-  const isos = dates.map(isoDate);
   const head = DAYS.map((d, i) =>
     `<th scope="col"${i === todayIdx ? ' class="today"' : ""}>${DAY_LABELS[d]}` +
     `<span class="th-date">${fmtD(dates[i])}</span></th>`).join("");
@@ -764,8 +752,7 @@ function timetableTable(s, maxP, dates, frees, todayIdx) {
     let cells = "";
     for (let i = 0; i < DAYS.length; i++) {
       if (frees[i]) { cells += `<td class="free"></td>`; continue; }
-      const cell = (s.timetable[DAYS[i]] || [])[p - 1];
-      cells += cellHtml(cell, cell ? eventFor(isos[i], cell.code, p, p) : null);
+      cells += cellHtml((s.timetable[DAYS[i]] || [])[p - 1]);
     }
     rows += `<tr><th scope="row">${p}.</th>${cells}</tr>`;
   }
@@ -773,17 +760,15 @@ function timetableTable(s, maxP, dates, frees, todayIdx) {
     `<tbody>${rows}</tbody></table>`;
 }
 
-function cellHtml(c, ev) {
+function cellHtml(c) {
   if (!c) return `<td class="free"></td>`;
   const info = parseLabel(c.label, c.code);
   const codeHtml = cur.byCode.has(c.code)
     ? `<a class="code" href="${L("k", c.code)}">${esc(info.code)}</a>`
     : `<span class="code">${esc(info.code)}</span>`;
-  return `<td${ev ? ` class="ev-cell ev-${ev.type}"` : ""}>${codeHtml}` +
+  return `<td>${codeHtml}` +
     (c.teacher ? ` <span class="teacher">${esc(c.teacher)}</span>` : "") +
-    (ev ? evChip(ev) + evChange(ev) : "") +
-    (info.desc ? `<span class="desc">${esc(info.desc)}</span>` : "") +
-    (ev && ev.text ? `<span class="desc ev-text">${esc(ev.text)}</span>` : "") + `</td>`;
+    (info.desc ? `<span class="desc">${esc(info.desc)}</span>` : "") + `</td>`;
 }
 
 function dayBlocks(arr, maxP) {
@@ -819,13 +804,6 @@ function renderCourse(code) {
   if (!c) return notFound("kurse", "Kurse", "Unbekannter Kurs.");
   const p = parseLabel(c.label, c.code);
   const members = c.students.map((nr) => cur.byNr.get(nr)).filter(Boolean).sort(byName);
-  const today = isoDate(new Date());
-  const changes = [];
-  for (const [dstr, evs] of cur.eventsByDate) {
-    if (dstr < today) continue;
-    for (const ev of evs) if (norm(ev.code) === norm(c.code)) changes.push({ ...ev, date: dstr });
-  }
-  changes.sort((a, b) => (a.date + a.period).localeCompare(b.date + b.period));
 
   view.innerHTML =
     backlink("kurse", "Kurse") +
@@ -840,20 +818,8 @@ function renderCourse(code) {
     (c.courseNr ? `<dt>Kurs-Nr.</dt><dd>${esc(c.courseNr)}</dd>` : "") +
     `<dt>Teilnehmer/innen</dt><dd>${members.length}</dd>` +
     `</dl>` +
-    (changes.length
-      ? `<h2 class="group-title">Kommende Änderungen</h2><ul class="ev-list">` +
-        changes.map((ev) => `<li class="ev-list-item ev-${ev.type}">` +
-          `<span class="ev-when">${esc(fmtEvDate(ev.date))} · ${ev.period}.${ev.endPeriod > ev.period ? "–" + ev.endPeriod + "." : ""}</span> ` +
-          `<span class="ev ev-${ev.type}">${ev.type === "ausfall" ? "entfällt" : "Vertretung"}</span>` +
-          (ev.text ? ` ${esc(ev.text)}` : "") + `</li>`).join("") + `</ul>`
-      : "") +
     `<h2 class="group-title">Teilnehmer/innen</h2>` +
     `<ul class="list">${members.map(studentRow).join("")}</ul>`;
-}
-
-function fmtEvDate(iso) {
-  const d = parseISO(iso);
-  return d ? `${DAYS[(d.getDay() + 6) % 7] || ""} ${fmtD(d)}` : iso;
 }
 
 /* --------------------------------------------------------- shared courses */

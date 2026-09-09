@@ -13,6 +13,7 @@ Startseite. Ansichten je Stufe:
 - **Kurse** – nach Fach gruppiert, mit Filterfeld (Fach, Kürzel, Lehrkraft);
   führt zum Kursprofil mit Lehrkraft und Teilnehmerliste.
 - **Gemeinsame Kurse** – zwei Personen wählen, es werden alle gemeinsam belegten Kurse angezeigt.
+- **Ferien** – alle Ferien und Feiertage des Schuljahres auf einen Blick.
 - **Lehrkräfte** – Liste aller Lehrkräfte, führt zu „alle Kurse dieser Lehrkraft".
 
 Im Stundenplan sind die Kurskürzel anklickbar; Lehrkräfte verlinken auf ihre Kursübersicht.
@@ -37,12 +38,10 @@ data/meta.json          Liste der Stufen, Datenstand, offene Punkte
 data/calendar.json      Ferien / Feiertage (von Hand gepflegt)
 data/k1/students.json   Schülerdaten K1     (erzeugt, im Repo)
 data/k1/courses.json    Kursdaten K1
-data/k1/events.json     Ausfälle / Vertretungen K1 (aus WebUntis, siehe unten)
 data/k2/…               dasselbe für K2
 build/parse_pdfs.py     PDF-Konverter (nur lokal nötig)
 build/subjects.json     Fach-Kürzel → ausgeschriebener Name (von Hand pflegbar)
 build/course-teachers.json  Lehrkräfte korrigieren/nachtragen (von Hand)
-build/fetch_untis.py    holt Ausfälle aus WebUntis (nur lokal, siehe unten)
 ```
 
 ## Ferien & Feiertage
@@ -58,27 +57,8 @@ Die aktuell hinterlegten Werte sind eine **erste Näherung** – bitte gegen den
 BW-Ferienkalender **und** den Jahresplan der Schule prüfen und die **beweglichen
 Ferientage** ergänzen. Nach dem Ändern einfach `data/calendar.json` committen und pushen.
 
-## Ausfälle aus WebUntis
-
-`data/<stufe>/events.json` enthält Ausfälle und Vertretungen; sie werden im Stundenplan
-angezeigt (durchgestrichen + „entfällt" bzw. „Vertretung"). Befüllt wird die Datei
-**lokal** – nicht im Browser (WebUntis blockt Cross-Origin, Zugangsdaten gehören nicht
-ins öffentliche Repo).
-
-```
-pip3 install -r build/requirements.txt      # nur beim ersten Mal
-python3 build/fetch_untis.py
-```
-
-Beim ersten Start fragt das Skript nach **Schule** (Suche, keine URL nötig), **Login**
-und **Stufe** und speichert das in `build/untis-config.json` (steht in `.gitignore`).
-Danach reicht der eine Befehl: es holt die Ausfälle, zeigt sie an und lädt sie nach
-kurzer Rückfrage direkt zu GitHub hoch.
-
-Meldet das Skript, dass ein Kürzel zu keinem webDumbis-Kurscode passt, in
-`build/untis-config.json` unter `"subjectMap"` zuordnen (z. B. `{"GK": "gk3"}`) und
-nochmal starten. Bei 2-Faktor-Anmeldung des WebUntis-Kontos klappt der Passwort-Login
-(noch) nicht.
+Der Reiter **Ferien** auf der Webseite listet alle Einträge aus dieser Datei auf;
+die Ferienwochen werden außerdem im Stundenplan markiert.
 
 ## Lehrkräfte korrigieren / nachtragen
 

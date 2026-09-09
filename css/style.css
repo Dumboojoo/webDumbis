@@ -653,67 +653,51 @@ table.tt .desc {
 .tt-desc { color: var(--text-soft); }
 .tt-teacher { color: var(--text-faint); }
 
-/* ------------------------------------------------ Ausfall / Vertretung (Events) */
-:root {
-  --ev-ausfall: #e11d2e;          /* knallrot */
-  --ev-ausfall-bg: #fdeaec;
-  --ev-vertretung: #a9660a;
-  --ev-vertretung-bg: #fbf0dd;
-}
-:root[data-theme="dark"] {
-  --ev-ausfall: #ff5a6a;
-  --ev-ausfall-bg: #3d161b;
-  --ev-vertretung: #e6b667;
-  --ev-vertretung-bg: #362d18;
-}
-.ev {
-  display: inline-block;
-  padding: 0.05rem 0.4rem;
-  border-radius: 5px;
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  vertical-align: 0.08em;
-  white-space: nowrap;
-}
-.ev-ausfall { color: #fff; background: var(--ev-ausfall); }
-.ev-vertretung { color: var(--ev-vertretung); background: var(--ev-vertretung-bg); }
-
-td.ev-cell.ev-ausfall, .tt-row.ev-ausfall { background: var(--ev-ausfall-bg); }
-td.ev-cell.ev-vertretung, .tt-row.ev-vertretung { background: var(--ev-vertretung-bg); }
-td.ev-cell.ev-ausfall { box-shadow: inset 3px 0 0 var(--ev-ausfall); }
-.ev-ausfall .code {
-  text-decoration: line-through;
-  text-decoration-thickness: 2px;
-  color: var(--ev-ausfall) !important;
-  font-weight: 800;
-}
-.ev-text { font-style: italic; color: var(--text-soft); }
-
-.ev-list { list-style: none; margin: 0.6rem 0 0; padding: 0; }
-.ev-list-item {
-  padding: 0.6rem 0.9rem;
-  background: var(--surface);
+/* --------------------------------------------------------------- Ferien-Liste */
+.ferien-list {
+  list-style: none;
+  margin: 1rem 0 1.25rem;
+  padding: 0;
   border: 1px solid var(--border);
-  border-left: 3px solid var(--border);
   border-radius: var(--radius-sm);
-  margin-bottom: 0.4rem;
-  font-size: 0.92rem;
-  line-height: 1.5;
+  overflow: hidden;
 }
-.ev-list-item.ev-ausfall { border-left-color: var(--ev-ausfall); }
-.ev-list-item.ev-vertretung { border-left-color: var(--ev-vertretung); }
-.ev-list-item .code { font-weight: 700; }
-.ev-list-item.ev-ausfall .code { text-decoration: line-through; color: var(--ev-ausfall); }
-.ev-when {
-  display: inline-block;
-  min-width: 3.6rem;
-  color: var(--text-faint);
-  font-weight: 700;
+.ferien-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 1rem;
+  row-gap: 0.1rem;
+  padding: 0.7rem 1rem;
+  background: var(--surface);
+}
+.ferien-row + .ferien-row { border-top: 1px solid var(--border); }
+.ferien-label { grid-column: 1; font-weight: 650; }
+.ferien-date {
+  grid-column: 1;
+  color: var(--text-soft);
+  font-size: 0.9rem;
   font-variant-numeric: tabular-nums;
 }
-.ev-sub { color: var(--text-soft); font-size: 0.92em; }
+.ferien-meta {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.ferien-row.is-past { opacity: 0.5; }
+.ferien-row.is-now { background: var(--accent-soft); }
+.ferien-now {
+  margin-left: 0.35rem;
+  padding: 0.03rem 0.4rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  vertical-align: 0.08em;
+  color: var(--accent);
+  background: var(--surface);
+}
 
 /* ----------------------------------------------------------------- pickers */
 .pickers {
@@ -762,7 +746,7 @@ td.ev-cell.ev-ausfall { box-shadow: inset 3px 0 0 var(--ev-ausfall); }
     border-top: 1px solid var(--border);
     box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.06);
   }
-  #nav a.nav-where-more { display: none !important; }   /* Ausfälle/Lehrkräfte -> "Mehr"-Menü */
+  #nav a.nav-where-more { display: none !important; }   /* Ferien/Lehrkräfte -> "Mehr"-Menü */
   .nav-more-btn { display: flex !important; }
 
   #nav a:not(.more-sheet a),
