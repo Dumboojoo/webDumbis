@@ -3,7 +3,7 @@
 const DAYS = ["Mo", "Di", "Mi", "Do", "Fr"];
 const DAY_LABELS = { Mo: "Montag", Di: "Dienstag", Mi: "Mittwoch", Do: "Donnerstag", Fr: "Freitag" };
 const MAX_RESULTS = 30;
-const TOP_VIEWS = ["suche", "schueler", "kurse", "gemeinsam", "ferien", "lehrer", "statistik", "k1plan"];
+const TOP_VIEWS = ["suche", "schueler", "kurse", "gemeinsam", "ferien", "lehrer", "statistik"];
 const NOCACHE = { cache: "no-cache" };  // Daten immer revalidieren (Korrekturen sofort sichtbar)
 
 const view = document.getElementById("view");
@@ -36,10 +36,6 @@ const ICONS = {
     `<circle cx="19" cy="12" r="1.5" fill="currentColor"/>`),
   chart: I(`<path d="M4 20V10"/><path d="M11 20V4"/><path d="M18 20v-7"/>` +
     `<path d="M3 20h18"/>`),
-  grid: I(`<rect x="3.5" y="3.5" width="7.5" height="7.5" rx="1.2"/>` +
-    `<rect x="13" y="3.5" width="7.5" height="7.5" rx="1.2"/>` +
-    `<rect x="3.5" y="13" width="7.5" height="7.5" rx="1.2"/>` +
-    `<rect x="13" y="13" width="7.5" height="7.5" rx="1.2"/>`),
 };
 const NAV = [
   { id: "suche", label: "Suche", short: "Suche", icon: "search", where: "both" },
@@ -49,7 +45,6 @@ const NAV = [
   { id: "ferien", label: "Ferien", short: "Ferien", icon: "sun", where: "more" },
   { id: "lehrer", label: "Lehrkräfte", short: "Lehrer", icon: "cap", where: "more" },
   { id: "statistik", label: "Statistik", short: "Statistik", icon: "chart", where: "more" },
-  { id: "k1plan", label: "K1 Plan", short: "K1 Plan", icon: "grid", where: "more", cohort: "k1" },
 ];
 
 /* Seitenaufrufe: gezählt über GoatCounter (kein Cookie, keine Einwilligung nötig). */
@@ -268,7 +263,7 @@ async function init() {
   route();
 }
 
-/* Nav-Einträge, die für die aktuelle Stufe gelten (manche wie "K1 Plan" nur bei k1). */
+/* Nav-Einträge, die für die aktuelle Stufe gelten (einzelne könnten per "cohort" auf eine Stufe eingeschränkt sein). */
 function navItems() {
   return NAV.filter((n) => !n.cohort || n.cohort === cohortId);
 }
@@ -409,10 +404,6 @@ async function route() {
     case "ferien": renderFerien(); break;
     case "lehrer": renderTeacherList(); break;
     case "statistik": renderStatistik(); break;
-    case "k1plan":
-      if (cohortId === "k1") renderK1Plan();
-      else notFound("suche", "Suche", "„K1 Plan“ gibt es nur bei K1.");
-      break;
     case "s": renderStudent(a, week); activeNav = "schueler"; break;
     case "k": renderCourse(a); activeNav = "kurse"; break;
     case "l": renderTeacher(a); activeNav = "lehrer"; break;
@@ -754,64 +745,6 @@ function renderStatistik() {
     .catch(() => {
       const el = document.getElementById("statCount");
       if (el) el.textContent = "–";
-    });
-}
-
-/* ------------------------------------------------------------- K1-Plan (WebUntis) */
-function fmtTimes(times) {
-  const byDay = {};
-  for (const t of times || []) (byDay[t.day] || (byDay[t.day] = [])).push(t.period);
-  return DAYS.filter((d) => byDay[d]).map((d) => {
-    const ps = [...new Set(byDay[d])].sort((a, b) => a - b);
-    const parts = [];
-    let start = ps[0], prev = ps[0];
-    for (let i = 1; i <= ps.length; i++) {
-      const p = ps[i];
-      if (p === prev + 1) { prev = p; continue; }
-      parts.push(start === prev ? `${start}.` : `${start}.–${prev}.`);
-      start = prev = p;
-    }
-    return `${d} ${parts.join(", ")}`;
-  }).join(" · ");
-}
-
-function renderK1Plan() {
-  view.innerHTML =
-    `<h1>K1 Plan</h1>` +
-    `<p class="sub" id="k1planSub">Direkt aus WebUntis, nicht aus dem Schul-PDF – lädt …</p>` +
-    `<div id="k1plan-body"></div>` +
-    `<p class="disclaimer">Ungefiltert so, wie WebUntis es gerade anzeigt – keine ` +
-    `zusätzliche Prüfung wie bei den anderen Reitern. Bei Zweifeln zählt trotzdem der ` +
-    `Aushang der Schule.</p>`;
-  const sub = document.getElementById("k1planSub");
-  const body = document.getElementById("k1plan-body");
-
-  fetch("data/k1/untis-plan.json", NOCACHE)
-    .then((r) => { if (!r.ok) throw new Error("missing"); return r.json(); })
-    .then((d) => {
-      const courses = (d.courses || []).slice().sort((a, b) => deCmp(a.code || "", b.code || ""));
-      sub.textContent = `${d.className || "K1"} · direkt aus WebUntis` +
-        (d.generatedAt ? ` · Stand ${d.generatedAt}` : "");
-      body.innerHTML = courses.length
-        ? `<ul class="list k1plan-list">` + courses.map((c) => {
-            const lk = /^[A-ZÄÖÜ]/.test(c.code || "");
-            const teacherText = c.teacher ||
-              (c.teacherAbbr ? `Kürzel „${c.teacherAbbr}“ (noch nicht zugeordnet)` : "");
-            return `<li class="k1plan-row">` +
-              `<div class="k1plan-head">` +
-              `<span class="badge badge-${lk ? "lk" : "bk"}">${esc(c.code || "?")}</span>` +
-              `<span class="crow-title">${esc(c.subject || "")}</span>` +
-              `<span class="crow-teacher${c.teacher ? "" : " crow-teacher-none"}">${esc(teacherText)}</span>` +
-              `</div>` +
-              `<div class="k1plan-times">${esc(fmtTimes(c.times))}` +
-              `${c.room ? ` · ${esc(c.room)}` : ""}</div></li>`;
-          }).join("") + `</ul>`
-        : `<p class="empty">Noch keine Daten von WebUntis vorhanden.</p>`;
-    })
-    .catch(() => {
-      sub.textContent = "Direkt aus WebUntis, nicht aus dem Schul-PDF";
-      body.innerHTML = `<p class="empty">Noch keine Daten. Lokal einmal ausführen: ` +
-        `<code>python3 build/fetch_k1_plan.py</code>, dann committen und pushen.</p>`;
     });
 }
 

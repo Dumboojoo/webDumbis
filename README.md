@@ -15,8 +15,6 @@ Startseite. Ansichten je Stufe:
 - **Gemeinsame Kurse** – zwei Personen wählen, es werden alle gemeinsam belegten Kurse angezeigt.
 - **Ferien** – alle Ferien und Feiertage des Schuljahres auf einen Blick.
 - **Lehrkräfte** – Liste aller Lehrkräfte, führt zu „alle Kurse dieser Lehrkraft".
-- **K1 Plan** (nur bei K1) – der komplette K1-Kursplan direkt aus WebUntis, ungefiltert.
-  Andere Quelle als der Rest der Seite (siehe unten) – bei Abweichungen zählt hier WebUntis.
 
 Im Stundenplan sind die Kurskürzel anklickbar; Lehrkräfte verlinken auf ihre Kursübersicht.
 Über dem Stundenplan lässt sich zwischen **Kalenderwochen** blättern (echte Datumsangaben,
@@ -40,14 +38,12 @@ data/meta.json          Liste der Stufen, Datenstand, offene Punkte
 data/calendar.json      Ferien / Feiertage (von Hand gepflegt)
 data/k1/students.json   Schülerdaten K1     (erzeugt, im Repo)
 data/k1/courses.json    Kursdaten K1
-data/k1/untis-plan.json K1-Kursplan direkt aus WebUntis (Reiter "K1 Plan", siehe unten)
-data/k2/…               dasselbe für K2 (kein untis-plan.json)
+data/k2/…               dasselbe für K2
 build/parse_pdfs.py     PDF-Konverter (nur lokal nötig)
 build/subjects.json     Fach-Kürzel → ausgeschriebener Name (von Hand pflegbar)
 build/course-teachers.json      Lehrkräfte korrigieren/nachtragen (von Hand)
 build/course-code-overrides.json  Kurscodes umbenennen, wenn die Schule sie geändert hat
 build/check_course_codes.py     vergleicht eigene Kurse mit WebUntis, schlägt Umbenennungen vor (nur lokal)
-build/fetch_k1_plan.py  holt den kompletten K1-Plan aus WebUntis nach untis-plan.json (nur lokal)
 ```
 
 ## Ferien & Feiertage
@@ -120,34 +116,6 @@ webDumbis-Schülernummer und speichert das in `build/untis-config.json` (steht i
 
 Danach wie gewohnt `python3 build/parse_pdfs.py` ausführen, den Report und `git diff` auf
 `data/**` querlesen und erst dann committen.
-
-## K1 Plan (roh aus WebUntis)
-
-Der Reiter **K1 Plan** ist ein bewusster Sonderfall: er zeigt **ungefiltert**, was
-WebUntis gerade sagt – kein Abgleich mit dem PDF, keine Kurscode-Logik, keine
-Lehrkraft-Prüfung. Betrifft nur K1 und nur diesen einen Reiter; Suche, Schüler/innen,
-Kurse und Lehrkräfte laufen für K1 weiterhin wie gewohnt über das Schul-PDF.
-
-```
-pip3 install -r build/requirements.txt      # nur beim ersten Mal
-python3 build/fetch_k1_plan.py
-```
-
-Loggt sich **lokal** mit dem eigenen WebUntis-Account ein (dieselbe `untis-config.json`
-wie oben), holt den kompletten K1-Kursplan der aktuellen Woche direkt aus WebUntis und
-schreibt ihn nach `data/k1/untis-plan.json`. Danach fragt es nach, ob gleich auf GitHub
-hochgeladen werden soll.
-
-WebUntis liefert den Kursnamen im Format `<Kurscode>_K1_<Lehrkraft-Kürzel>`
-(z. B. `spo2_K1_Gör`). `build/teacher-abbr.json` löst das Kürzel zum Klarnamen auf:
-
-```json
-{ "Gör": "Frau Görlich", "Hej": "Frau Herb", "Kne": "Herr Kneißle" }
-```
-
-Nur Kürzel eintragen, die bestätigt sind. Für alles andere zeigt der Reiter „K1 Plan"
-nur das rohe Kürzel als „noch nicht zugeordnet", und `fetch_k1_plan.py` listet unbekannte
-Kürzel am Ende noch mal extra auf.
 
 ## Daten aktualisieren
 
