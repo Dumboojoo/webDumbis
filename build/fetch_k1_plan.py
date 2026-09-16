@@ -45,14 +45,17 @@ def load_abbr_map() -> dict[str, str]:
     return {k: v for k, v in raw.items() if not k.startswith("_")}
 
 
-def split_untis_code(raw: str) -> tuple[str, str]:
+def split_untis_code(raw: str, klasse_name: str = KLASSE_NAME) -> tuple[str, str]:
     """WebUntis liefert den Kursnamen als "<Kurscode>_K1_<Lehrkraft-Kürzel>",
-    z. B. "spo2_K1_Gör" -> ("spo2", "Gör"). Passt das Format nicht, bleibt der
-    ganze Rohwert der Code und das Kürzel leer."""
+    z. B. "spo2_K1_Gör" -> ("spo2", "Gör"). Mindestens 3 Teile noetig (Kurscode,
+    Klasse, Kuerzel); manche Kurse ohne feste Lehrkraft (z. B. Seminarkurs) haben
+    stattdessen "semk1_K1_K1" - letzter Teil wiederholt nur die Klasse, kein
+    Kuerzel. Passt das Format nicht (oder letzter Teil == Klasse), bleibt nur der
+    erste Teil als Code, das Kürzel leer."""
     parts = raw.split("_")
-    if len(parts) >= 2 and parts[0] and parts[-1]:
+    if len(parts) >= 3 and parts[0] and parts[-1] and parts[-1] != klasse_name:
         return parts[0], parts[-1]
-    return raw, ""
+    return parts[0] if parts and parts[0] else raw, ""
 
 
 # --------------------------------------------------------------------- Setup

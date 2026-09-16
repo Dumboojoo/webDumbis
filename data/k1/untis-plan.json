@@ -73,7 +73,7 @@
   {
    "code": "BIO1",
    "subject": "Biologie",
-   "teacher": "",
+   "teacher": "Frau Kühn",
    "teacherAbbr": "Küs",
    "room": "B2",
    "times": [
@@ -106,7 +106,7 @@
   {
    "code": "bio1",
    "subject": "Biologie",
-   "teacher": "",
+   "teacher": "Frau Burkert",
    "teacherAbbr": "Bur",
    "room": "B3",
    "times": [
@@ -131,7 +131,7 @@
   {
    "code": "BIO2",
    "subject": "Biologie",
-   "teacher": "",
+   "teacher": "Frau Mayer",
    "teacherAbbr": "Mav",
    "room": "NWT",
    "times": [
@@ -164,7 +164,7 @@
   {
    "code": "bio2",
    "subject": "Biologie",
-   "teacher": "",
+   "teacher": "Frau Fischer",
    "teacherAbbr": "Fis",
    "room": "B2",
    "times": [
@@ -189,7 +189,7 @@
   {
    "code": "bk1",
    "subject": "Bildende Kunst",
-   "teacher": "",
+   "teacher": "Herr Roos",
    "teacherAbbr": "Roo",
    "room": "Wk",
    "times": [
@@ -206,7 +206,7 @@
   {
    "code": "BK1",
    "subject": "Bildende Kunst",
-   "teacher": "",
+   "teacher": "Frau Tendel",
    "teacherAbbr": "Ten",
    "room": "BK1",
    "times": [
@@ -247,7 +247,7 @@
   {
    "code": "bk2",
    "subject": "Bildende Kunst",
-   "teacher": "",
+   "teacher": "Herr Roos",
    "teacherAbbr": "Roo",
    "room": "Wk",
    "times": [
@@ -272,7 +272,7 @@
   {
    "code": "ch1",
    "subject": "Chemie",
-   "teacher": "",
+   "teacher": "Frau Günther",
    "teacherAbbr": "Gün",
    "room": "C2",
    "times": [
@@ -297,7 +297,7 @@
   {
    "code": "CH1",
    "subject": "Chemie",
-   "teacher": "",
+   "teacher": "Herr Kleinknecht",
    "teacherAbbr": "Klk",
    "room": "C1",
    "times": [
@@ -330,7 +330,7 @@
   {
    "code": "ch2",
    "subject": "Chemie",
-   "teacher": "",
+   "teacher": "Frau Höschele",
    "teacherAbbr": "Hös",
    "room": "C1",
    "times": [
@@ -389,7 +389,7 @@
   {
    "code": "D1",
    "subject": "Deutsch",
-   "teacher": "",
+   "teacher": "Herr Lobeck",
    "teacherAbbr": "Lob",
    "room": "C203",
    "times": [
@@ -418,7 +418,7 @@
   {
    "code": "d1",
    "subject": "Deutsch",
-   "teacher": "",
+   "teacher": "Herr Hölzel",
    "teacherAbbr": "Höl",
    "room": "A501",
    "times": [
@@ -439,7 +439,7 @@
   {
    "code": "D2",
    "subject": "Deutsch",
-   "teacher": "",
+   "teacher": "Frau Pfahler",
    "teacherAbbr": "Pf",
    "room": "A202",
    "times": [
@@ -510,7 +510,7 @@
   {
    "code": "D3",
    "subject": "Deutsch",
-   "teacher": "",
+   "teacher": "Frau Baki",
    "teacherAbbr": "Bak",
    "room": "A301",
    "times": [
@@ -539,7 +539,7 @@
   {
    "code": "E1",
    "subject": "Englisch",
-   "teacher": "",
+   "teacher": "Frau Herrmann",
    "teacherAbbr": "Her",
    "room": "B1",
    "times": [
@@ -572,7 +572,7 @@
   {
    "code": "e1",
    "subject": "Englisch",
-   "teacher": "",
+   "teacher": "Herr Vogler",
    "teacherAbbr": "Vog",
    "room": "C205",
    "times": [
@@ -597,7 +597,7 @@
   {
    "code": "E2",
    "subject": "Englisch",
-   "teacher": "",
+   "teacher": "Frau Friebolin",
    "teacherAbbr": "Fri",
    "room": "C304",
    "times": [
@@ -626,7 +626,7 @@
   {
    "code": "e2",
    "subject": "Englisch",
-   "teacher": "",
+   "teacher": "Frau Schork",
    "teacherAbbr": "Sor",
    "room": "A408",
    "times": [
@@ -647,7 +647,7 @@
   {
    "code": "eth1",
    "subject": "Ethik",
-   "teacher": "",
+   "teacher": "Herr Wedekind",
    "teacherAbbr": "Wej",
    "room": "E405",
    "times": [
@@ -664,7 +664,7 @@
   {
    "code": "f1",
    "subject": "Französisch",
-   "teacher": "",
+   "teacher": "Frau Scheiderer",
    "teacherAbbr": "Sdr",
    "room": "A503",
    "times": [
@@ -685,7 +685,7 @@
   {
    "code": "g1",
    "subject": "Geschichte",
-   "teacher": "",
+   "teacher": "Frau Gültlinger",
    "teacherAbbr": "Gül",
    "room": "A408",
    "times": [
@@ -702,7 +702,7 @@
   {
    "code": "G1",
    "subject": "Geschichte",
-   "teacher": "",
+   "teacher": "Herr Hölzel",
    "teacherAbbr": "Höl",
    "room": "A501",
    "times": [
@@ -727,7 +727,7 @@
   {
    "code": "g2",
    "subject": "Geschichte",
-   "teacher": "",
+   "teacher": "Herr Wedekind",
    "teacherAbbr": "Wej",
    "room": "E403",
    "times": [
@@ -744,7 +744,7 @@
   {
    "code": "g3",
    "subject": "Geschichte",
-   "teacher": "",
+   "teacher": "Herr Sefrin",
    "teacherAbbr": "Sef",
    "room": "B2",
    "times": [
@@ -761,7 +761,7 @@
   {
    "code": "g4",
    "subject": "Geschichte",
-   "teacher": "",
+   "teacher": "Herr Wannemacher",
    "teacherAbbr": "Wap",
    "room": "E405",
    "times": [
@@ -778,7 +778,7 @@
   {
    "code": "geo1",
    "subject": "Geographie (Erdkunde)",
-   "teacher": "",
+   "teacher": "Herr Kühn",
    "teacherAbbr": "Küh",
    "room": "A503",
    "times": [
@@ -795,7 +795,7 @@
   {
    "code": "GEO1",
    "subject": "Geographie (Erdkunde)",
-   "teacher": "",
+   "teacher": "Frau Schäfer",
    "teacherAbbr": "Sch",
    "room": "A301",
    "times": [
@@ -836,7 +836,7 @@
   {
    "code": "geo2",
    "subject": "Geographie (Erdkunde)",
-   "teacher": "",
+   "teacher": "Herr Roß",
    "teacherAbbr": "Ros",
    "room": "A302",
    "times": [
@@ -853,7 +853,7 @@
   {
    "code": "geo3",
    "subject": "Geographie (Erdkunde)",
-   "teacher": "",
+   "teacher": "Herr Roß",
    "teacherAbbr": "Ros",
    "room": "A403",
    "times": [
@@ -878,7 +878,7 @@
   {
    "code": "geo4",
    "subject": "Geographie (Erdkunde)",
-   "teacher": "",
+   "teacher": "Frau Engelhardt",
    "teacherAbbr": "Eng",
    "room": "NWT",
    "times": [
@@ -895,7 +895,7 @@
   {
    "code": "I1",
    "subject": "Italienisch",
-   "teacher": "",
+   "teacher": "Frau Scheiderer",
    "teacherAbbr": "Sdr",
    "room": "C306",
    "times": [
@@ -949,7 +949,7 @@
   {
    "code": "lit1",
    "subject": "Literatur",
-   "teacher": "",
+   "teacher": "Frau Tendel",
    "teacherAbbr": "Ten",
    "room": "BK2",
    "times": [
@@ -974,7 +974,7 @@
   {
    "code": "lut1",
    "subject": "Literatur und Theater",
-   "teacher": "",
+   "teacher": "Frau Tendel",
    "teacherAbbr": "Ten",
    "room": "BK2",
    "times": [
@@ -999,7 +999,7 @@
   {
    "code": "M1",
    "subject": "Mathematik",
-   "teacher": "",
+   "teacher": "Herr Frommknecht",
    "teacherAbbr": "Frk",
    "room": "A404",
    "times": [
@@ -1028,7 +1028,7 @@
   {
    "code": "m1",
    "subject": "Mathematik",
-   "teacher": "",
+   "teacher": "Herr Stelter",
    "teacherAbbr": "Wan",
    "room": "C305",
    "times": [
@@ -1049,7 +1049,7 @@
   {
    "code": "M2",
    "subject": "Mathematik",
-   "teacher": "Herr Kneißle",
+   "teacher": "Herr Kneißl",
    "teacherAbbr": "Kne",
    "room": "A303",
    "times": [
@@ -1099,7 +1099,7 @@
   {
    "code": "m3",
    "subject": "Mathematik",
-   "teacher": "",
+   "teacher": "Frau Wannemacher",
    "teacherAbbr": "Web",
    "room": "A402",
    "times": [
@@ -1120,7 +1120,7 @@
   {
    "code": "M3",
    "subject": "Mathematik",
-   "teacher": "",
+   "teacher": "Herr Heiß",
    "teacherAbbr": "Hei",
    "room": "P3",
    "times": [
@@ -1216,7 +1216,7 @@
   {
    "code": "PH1",
    "subject": "Physik",
-   "teacher": "",
+   "teacher": "Herr Maurer",
    "teacherAbbr": "Mau",
    "room": "P1",
    "times": [
@@ -1249,7 +1249,7 @@
   {
    "code": "ph2",
    "subject": "Physik",
-   "teacher": "",
+   "teacher": "Herr Kövi",
    "teacherAbbr": "Köv",
    "room": "P1",
    "times": [
@@ -1274,7 +1274,7 @@
   {
    "code": "psy1",
    "subject": "Psychologie",
-   "teacher": "",
+   "teacher": "Frau Hermes",
    "teacherAbbr": "Hes",
    "room": "A203",
    "times": [
@@ -1299,7 +1299,7 @@
   {
    "code": "psy2",
    "subject": "Psychologie",
-   "teacher": "",
+   "teacher": "Herr Roos",
    "teacherAbbr": "Roo",
    "room": "Wk",
    "times": [
@@ -1324,7 +1324,7 @@
   {
    "code": "rev1",
    "subject": "evang. Religionslehre",
-   "teacher": "",
+   "teacher": "Herr Sefrin",
    "teacherAbbr": "Sef",
    "room": "C304",
    "times": [
@@ -1341,7 +1341,7 @@
   {
    "code": "rev2",
    "subject": "evang. Religionslehre",
-   "teacher": "",
+   "teacher": "Herr Schwarz",
    "teacherAbbr": "Swa",
    "room": "E402",
    "times": [
@@ -1358,7 +1358,7 @@
   {
    "code": "rrk1",
    "subject": "kath. Religionslehre",
-   "teacher": "",
+   "teacher": "Herr Wannemacher",
    "teacherAbbr": "Wap",
    "room": "E403",
    "times": [
@@ -1376,7 +1376,7 @@
    "code": "semk1",
    "subject": "Seminarkurs",
    "teacher": "",
-   "teacherAbbr": "K1",
+   "teacherAbbr": "",
    "room": "A402",
    "times": [
     {
@@ -1401,7 +1401,7 @@
    "code": "semk2",
    "subject": "Seminarkurs",
    "teacher": "",
-   "teacherAbbr": "K1",
+   "teacherAbbr": "",
    "room": "A408",
    "times": [
     {
@@ -1508,7 +1508,7 @@
   {
    "code": "spo3",
    "subject": "Sport",
-   "teacher": "",
+   "teacher": "Frau Hermes",
    "teacherAbbr": "Hes",
    "room": "H2",
    "times": [
@@ -1525,7 +1525,7 @@
   {
    "code": "WI1",
    "subject": "Wirtschaft",
-   "teacher": "",
+   "teacher": "Frau Bender",
    "teacherAbbr": "Ben",
    "room": "C305",
    "times": [
