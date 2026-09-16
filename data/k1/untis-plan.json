@@ -1,0 +1,1503 @@
+{
+ "generatedAt": "2026-09-16 22:39",
+ "source": "WebUntis",
+ "className": "K1",
+ "courses": [
+  {
+   "code": "",
+   "subject": "",
+   "teacher": "",
+   "room": "Aula",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 1
+    },
+    {
+     "day": "Mo",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "AG-TH-9-K2",
+   "subject": "Theater AG 9-K2",
+   "teacher": "",
+   "room": "",
+   "times": [
+    {
+     "day": "Fr",
+     "period": 7
+    },
+    {
+     "day": "Fr",
+     "period": 8
+    },
+    {
+     "day": "Fr",
+     "period": 9
+    },
+    {
+     "day": "Fr",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "BB_Sta",
+   "subject": "Big Band - Klasse 9-K2",
+   "teacher": "",
+   "room": "Mu1",
+   "times": [
+    {
+     "day": "Fr",
+     "period": 7
+    },
+    {
+     "day": "Fr",
+     "period": 8
+    },
+    {
+     "day": "Fr",
+     "period": 9
+    },
+    {
+     "day": "Fr",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "bio1_K1_Bur",
+   "subject": "Biologie",
+   "teacher": "",
+   "room": "B3",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "BIO1_K1_Küs",
+   "subject": "Biologie",
+   "teacher": "",
+   "room": "B2",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Mi",
+     "period": 1
+    },
+    {
+     "day": "Mi",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "bio2_K1_Fis",
+   "subject": "Biologie",
+   "teacher": "",
+   "room": "B2",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 5
+    },
+    {
+     "day": "Mo",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 1
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "BIO2_K1_Mav",
+   "subject": "Biologie",
+   "teacher": "",
+   "room": "NWT",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 5
+    },
+    {
+     "day": "Mo",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 1
+    },
+    {
+     "day": "Do",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 5
+    },
+    {
+     "day": "Fr",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "bk1_K1_Roo",
+   "subject": "Bildende Kunst",
+   "teacher": "",
+   "room": "Wk",
+   "times": [
+    {
+     "day": "Do",
+     "period": 5
+    },
+    {
+     "day": "Do",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "BK1_K1_Ten",
+   "subject": "Bildende Kunst",
+   "teacher": "",
+   "room": "BK1",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 1
+    },
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Di",
+     "period": 7
+    },
+    {
+     "day": "Di",
+     "period": 8
+    },
+    {
+     "day": "Di",
+     "period": 9
+    },
+    {
+     "day": "Di",
+     "period": 10
+    },
+    {
+     "day": "Fr",
+     "period": 3
+    },
+    {
+     "day": "Fr",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "bk2_K1_Roo",
+   "subject": "Bildende Kunst",
+   "teacher": "",
+   "room": "Wk",
+   "times": [
+    {
+     "day": "Do",
+     "period": 7
+    },
+    {
+     "day": "Do",
+     "period": 8
+    },
+    {
+     "day": "Do",
+     "period": 9
+    },
+    {
+     "day": "Do",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "ch1_K1_Gün",
+   "subject": "Chemie",
+   "teacher": "",
+   "room": "C2",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 5
+    },
+    {
+     "day": "Mo",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 1
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "CH1_K1_Klk",
+   "subject": "Chemie",
+   "teacher": "",
+   "room": "C1",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 5
+    },
+    {
+     "day": "Mo",
+     "period": 6
+    },
+    {
+     "day": "Di",
+     "period": 1
+    },
+    {
+     "day": "Di",
+     "period": 2
+    },
+    {
+     "day": "Do",
+     "period": 1
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "ch2_K1_Hös",
+   "subject": "Chemie",
+   "teacher": "",
+   "room": "C1",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 3
+    },
+    {
+     "day": "Mi",
+     "period": 4
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "CHOR9K2_Fra",
+   "subject": "Chor - Klasse 9-K2",
+   "teacher": "",
+   "room": "Mu4",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 7
+    },
+    {
+     "day": "Mo",
+     "period": 8
+    },
+    {
+     "day": "Mo",
+     "period": 9
+    },
+    {
+     "day": "Mo",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "CourAGe",
+   "subject": "Courage-AG",
+   "teacher": "",
+   "room": "A201",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "d1_K1_Höl",
+   "subject": "Deutsch",
+   "teacher": "",
+   "room": "A501",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "D1_K1_Lob",
+   "subject": "Deutsch",
+   "teacher": "",
+   "room": "C203",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 5
+    },
+    {
+     "day": "Do",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "d2_K1_Mör",
+   "subject": "Deutsch",
+   "teacher": "",
+   "room": "A303",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "D2_K1_Pf",
+   "subject": "Deutsch",
+   "teacher": "",
+   "room": "A202",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 5
+    },
+    {
+     "day": "Do",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "D3_K1_Bak",
+   "subject": "Deutsch",
+   "teacher": "",
+   "room": "A301",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 5
+    },
+    {
+     "day": "Do",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "d3_K1_Mos",
+   "subject": "Deutsch",
+   "teacher": "",
+   "room": "C305",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "E1_K1_Her",
+   "subject": "Englisch",
+   "teacher": "",
+   "room": "B1",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 5
+    },
+    {
+     "day": "Mo",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 1
+    },
+    {
+     "day": "Do",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 5
+    },
+    {
+     "day": "Fr",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "e1_K1_Vog",
+   "subject": "Englisch",
+   "teacher": "",
+   "room": "C205",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "E2_K1_Fri",
+   "subject": "Englisch",
+   "teacher": "",
+   "room": "C304",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 3
+    },
+    {
+     "day": "Mi",
+     "period": 4
+    },
+    {
+     "day": "Do",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 5
+    },
+    {
+     "day": "Fr",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "e2_K1_Sor",
+   "subject": "Englisch",
+   "teacher": "",
+   "room": "A408",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 3
+    },
+    {
+     "day": "Mi",
+     "period": 4
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "eth1_K1_Wej",
+   "subject": "Ethik",
+   "teacher": "",
+   "room": "E405",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 3
+    },
+    {
+     "day": "Mo",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "f1_K1_Sdr",
+   "subject": "Französisch",
+   "teacher": "",
+   "room": "A503",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 3
+    },
+    {
+     "day": "Mi",
+     "period": 4
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "g1_K1_Gül",
+   "subject": "Geschichte",
+   "teacher": "",
+   "room": "A408",
+   "times": [
+    {
+     "day": "Di",
+     "period": 5
+    },
+    {
+     "day": "Di",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "G1_K1_Höl",
+   "subject": "Geschichte",
+   "teacher": "",
+   "room": "A501",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 1
+    },
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 3
+    },
+    {
+     "day": "Fr",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "g2_K1_Wej",
+   "subject": "Geschichte",
+   "teacher": "",
+   "room": "E403",
+   "times": [
+    {
+     "day": "Do",
+     "period": 5
+    },
+    {
+     "day": "Do",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "g3_K1_Sef",
+   "subject": "Geschichte",
+   "teacher": "",
+   "room": "B2",
+   "times": [
+    {
+     "day": "Di",
+     "period": 1
+    },
+    {
+     "day": "Di",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "g4_K1_Wap",
+   "subject": "Geschichte",
+   "teacher": "",
+   "room": "E405",
+   "times": [
+    {
+     "day": "Fr",
+     "period": 5
+    },
+    {
+     "day": "Fr",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "geo1_K1_Küh",
+   "subject": "Geographie (Erdkunde)",
+   "teacher": "",
+   "room": "A503",
+   "times": [
+    {
+     "day": "Fr",
+     "period": 3
+    },
+    {
+     "day": "Fr",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "GEO1_K1_Sch",
+   "subject": "Geographie (Erdkunde)",
+   "teacher": "",
+   "room": "A301",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 1
+    },
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Di",
+     "period": 7
+    },
+    {
+     "day": "Di",
+     "period": 8
+    },
+    {
+     "day": "Di",
+     "period": 9
+    },
+    {
+     "day": "Di",
+     "period": 10
+    },
+    {
+     "day": "Fr",
+     "period": 3
+    },
+    {
+     "day": "Fr",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "geo2_K1_Ros",
+   "subject": "Geographie (Erdkunde)",
+   "teacher": "",
+   "room": "A302",
+   "times": [
+    {
+     "day": "Di",
+     "period": 1
+    },
+    {
+     "day": "Di",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "geo3_K1_Ros",
+   "subject": "Geographie (Erdkunde)",
+   "teacher": "",
+   "room": "A403",
+   "times": [
+    {
+     "day": "Do",
+     "period": 7
+    },
+    {
+     "day": "Do",
+     "period": 8
+    },
+    {
+     "day": "Do",
+     "period": 9
+    },
+    {
+     "day": "Do",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "geo4_K1_Eng",
+   "subject": "Geographie (Erdkunde)",
+   "teacher": "",
+   "room": "NWT",
+   "times": [
+    {
+     "day": "Di",
+     "period": 5
+    },
+    {
+     "day": "Di",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "I1_K1_Sdr",
+   "subject": "Italienisch",
+   "teacher": "",
+   "room": "C306",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Mi",
+     "period": 1
+    },
+    {
+     "day": "Mi",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "l1_K1_Hej",
+   "subject": "Latein",
+   "teacher": "",
+   "room": "BK1",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 3
+    },
+    {
+     "day": "Mi",
+     "period": 4
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "lit1_K1_Ten",
+   "subject": "Literatur",
+   "teacher": "",
+   "room": "BK2",
+   "times": [
+    {
+     "day": "Do",
+     "period": 7
+    },
+    {
+     "day": "Do",
+     "period": 8
+    },
+    {
+     "day": "Do",
+     "period": 9
+    },
+    {
+     "day": "Do",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "lut1_K1_Ten",
+   "subject": "Literatur und Theater",
+   "teacher": "",
+   "room": "BK2",
+   "times": [
+    {
+     "day": "Do",
+     "period": 7
+    },
+    {
+     "day": "Do",
+     "period": 8
+    },
+    {
+     "day": "Do",
+     "period": 9
+    },
+    {
+     "day": "Do",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "M1_K1_Frk",
+   "subject": "Mathematik",
+   "teacher": "",
+   "room": "A404",
+   "times": [
+    {
+     "day": "Di",
+     "period": 5
+    },
+    {
+     "day": "Di",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 3
+    },
+    {
+     "day": "Do",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "m1_K1_Wan",
+   "subject": "Mathematik",
+   "teacher": "",
+   "room": "C305",
+   "times": [
+    {
+     "day": "Do",
+     "period": 3
+    },
+    {
+     "day": "Do",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "M2_K1_Kne",
+   "subject": "Mathematik",
+   "teacher": "",
+   "room": "A303",
+   "times": [
+    {
+     "day": "Di",
+     "period": 5
+    },
+    {
+     "day": "Di",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 3
+    },
+    {
+     "day": "Do",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "m2_K1_Ste",
+   "subject": "Mathematik",
+   "teacher": "",
+   "room": "P3",
+   "times": [
+    {
+     "day": "Do",
+     "period": 3
+    },
+    {
+     "day": "Do",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "M3_K1_Hei",
+   "subject": "Mathematik",
+   "teacher": "",
+   "room": "P3",
+   "times": [
+    {
+     "day": "Di",
+     "period": 5
+    },
+    {
+     "day": "Di",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 3
+    },
+    {
+     "day": "Do",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "m3_K1_Web",
+   "subject": "Mathematik",
+   "teacher": "",
+   "room": "A402",
+   "times": [
+    {
+     "day": "Do",
+     "period": 3
+    },
+    {
+     "day": "Do",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "mus1_K1_Fra",
+   "subject": "Musik",
+   "teacher": "",
+   "room": "Mu4",
+   "times": [
+    {
+     "day": "Di",
+     "period": 1
+    },
+    {
+     "day": "Di",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "ORCH_Rei",
+   "subject": "Orchester",
+   "teacher": "",
+   "room": "Mu2",
+   "times": [
+    {
+     "day": "Fr",
+     "period": 7
+    },
+    {
+     "day": "Fr",
+     "period": 8
+    },
+    {
+     "day": "Fr",
+     "period": 9
+    },
+    {
+     "day": "Fr",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "PH1_K1_Mau",
+   "subject": "Physik",
+   "teacher": "",
+   "room": "P1",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Mi",
+     "period": 1
+    },
+    {
+     "day": "Mi",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "ph1_K1_Ste",
+   "subject": "Physik",
+   "teacher": "",
+   "room": "P2",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "ph2_K1_Köv",
+   "subject": "Physik",
+   "teacher": "",
+   "room": "P1",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 5
+    },
+    {
+     "day": "Mo",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 1
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "psy1_K1_Hes",
+   "subject": "Psychologie",
+   "teacher": "",
+   "room": "A203",
+   "times": [
+    {
+     "day": "Do",
+     "period": 7
+    },
+    {
+     "day": "Do",
+     "period": 8
+    },
+    {
+     "day": "Do",
+     "period": 9
+    },
+    {
+     "day": "Do",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "psy2_K1_Roo",
+   "subject": "Psychologie",
+   "teacher": "",
+   "room": "Wk",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 7
+    },
+    {
+     "day": "Mi",
+     "period": 8
+    },
+    {
+     "day": "Mi",
+     "period": 9
+    },
+    {
+     "day": "Mi",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "rev1_K1_Sef",
+   "subject": "evang. Religionslehre",
+   "teacher": "",
+   "room": "C304",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 3
+    },
+    {
+     "day": "Mo",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "rev2_K1_Swa",
+   "subject": "evang. Religionslehre",
+   "teacher": "",
+   "room": "E402",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 3
+    },
+    {
+     "day": "Mo",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "rrk1_K1_Wap",
+   "subject": "kath. Religionslehre",
+   "teacher": "",
+   "room": "E403",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 3
+    },
+    {
+     "day": "Mo",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "semk1_K1",
+   "subject": "Seminarkurs",
+   "teacher": "",
+   "room": "A402",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 7
+    },
+    {
+     "day": "Mi",
+     "period": 8
+    },
+    {
+     "day": "Mi",
+     "period": 9
+    },
+    {
+     "day": "Mi",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "semk2_K1",
+   "subject": "Seminarkurs",
+   "teacher": "",
+   "room": "A408",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 7
+    },
+    {
+     "day": "Mi",
+     "period": 8
+    },
+    {
+     "day": "Mi",
+     "period": 9
+    },
+    {
+     "day": "Mi",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "spo1_K1_Hej",
+   "subject": "Sport",
+   "teacher": "",
+   "room": "H1",
+   "times": [
+    {
+     "day": "Di",
+     "period": 1
+    },
+    {
+     "day": "Di",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "SPO1_K1_Rom",
+   "subject": "Sport",
+   "teacher": "",
+   "room": "A303",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 1
+    },
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Di",
+     "period": 7
+    },
+    {
+     "day": "Di",
+     "period": 8
+    },
+    {
+     "day": "Di",
+     "period": 9
+    },
+    {
+     "day": "Di",
+     "period": 10
+    },
+    {
+     "day": "Fr",
+     "period": 3
+    },
+    {
+     "day": "Fr",
+     "period": 4
+    }
+   ]
+  },
+  {
+   "code": "spo2_K1_Gör",
+   "subject": "Sport",
+   "teacher": "",
+   "room": "H1",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 7
+    },
+    {
+     "day": "Mo",
+     "period": 8
+    },
+    {
+     "day": "Mo",
+     "period": 9
+    },
+    {
+     "day": "Mo",
+     "period": 10
+    }
+   ]
+  },
+  {
+   "code": "spo3_K1_Hes",
+   "subject": "Sport",
+   "teacher": "",
+   "room": "H2",
+   "times": [
+    {
+     "day": "Mi",
+     "period": 1
+    },
+    {
+     "day": "Mi",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "WI1_K1_Ben",
+   "subject": "Wirtschaft",
+   "teacher": "",
+   "room": "C305",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 1
+    },
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Di",
+     "period": 7
+    },
+    {
+     "day": "Di",
+     "period": 8
+    },
+    {
+     "day": "Di",
+     "period": 9
+    },
+    {
+     "day": "Di",
+     "period": 10
+    },
+    {
+     "day": "Fr",
+     "period": 3
+    },
+    {
+     "day": "Fr",
+     "period": 4
+    }
+   ]
+  }
+ ]
+}
