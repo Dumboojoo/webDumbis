@@ -22,7 +22,7 @@
   --radius: 12px;
   --radius-sm: 8px;
   --radius-pill: 999px;
-  --shadow-sm: none;
+  --shadow-sm: 0 1px 2px rgba(20, 24, 33, 0.04), 0 1px 1px rgba(20, 24, 33, 0.03);
   --shadow: 0 6px 24px rgba(20, 24, 33, 0.08);
   --maxw: 960px;
   --sidebar-w: 250px;
@@ -51,6 +51,7 @@
   --bk-bg: #23262d;
   --bk-ink: #aab0bb;
 
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.18);
   --shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
 }
 
@@ -111,6 +112,15 @@ body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+a, button, input, select,
+.list li:not(.crow) > a, .crow, .stufe, .mine-card, .toggle-btn, .week-btn, .tt-tab {
+  transition: background-color .15s ease, border-color .15s ease,
+    color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
 .vh {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
@@ -391,10 +401,26 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
   box-shadow: var(--shadow-sm);
   color: var(--text);
 }
-.stufe:hover { text-decoration: none; border-color: var(--accent); }
+.stufe:hover { text-decoration: none; border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-1px); }
 .stufe-k { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
 .stufe-meta { display: block; margin-top: 0.3rem; color: var(--text-soft); font-size: 0.88rem; }
 .disclaimer { color: var(--text-faint); font-size: 0.83rem; line-height: 1.55; }
+
+.mine-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.1rem 1.3rem;
+  margin: 0 0 1.5rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  color: var(--text);
+}
+.mine-card:hover { text-decoration: none; box-shadow: var(--shadow); transform: translateY(-1px); }
+.mine-card-ico { font-size: 1.7rem; line-height: 1; }
+.mine-card-label { display: block; font-weight: 750; color: var(--accent); }
+.mine-card-sub { display: block; font-size: 0.85rem; color: var(--text-soft); }
 
 .stat-card {
   display: inline-flex;
@@ -440,6 +466,19 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 }
 .toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
 :root[data-pinky] #pinkyBtn { color: var(--accent); border-color: var(--accent); background: #fff0f7; }
+
+/* -------------------------------------------------------- student-head / mine */
+.student-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.9rem;
+  margin-bottom: 0.2rem;
+}
+.student-head h1 { margin: 0; }
+.mine-btn { flex-shrink: 0; white-space: nowrap; }
+.mine-btn.mine-active { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 
 /* ----------------------------------------------------------------- factbox */
 .factbox {
@@ -773,8 +812,8 @@ table.tt .desc {
     flex: 1;
     flex-direction: column;
     align-items: center;
-    gap: 0.12rem;
-    padding: 0.34rem 0.1rem;
+    gap: 0.16rem;
+    padding: 0.42rem 0.1rem;
     border-radius: 7px;
     font-size: 0.66rem;
     font-weight: 600;
@@ -801,12 +840,17 @@ table.tt .desc {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    animation: sheetIn 0.14s ease;
+  }
+  @keyframes sheetIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .more-sheet a {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.6rem 0.7rem;
+    padding: 0.7rem 0.7rem;
     border-radius: var(--radius-sm);
     color: var(--text);
     font-size: 0.92rem;

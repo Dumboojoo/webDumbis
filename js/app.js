@@ -61,6 +61,9 @@ const MORE_NAV = NAV.filter((n) => n.where === "more").map((n) => n.id);
 
 /* Kleiner Änderungs-Log für die Startseite – neuste zuerst, von Hand pflegen. */
 const CHANGELOG = [
+  ["16.09.", "Suche findet jetzt auch Kurse und Lehrkräfte, plus „zuletzt angesehen“"],
+  ["16.09.", "Eigenen Stundenplan merken – direkt von der Startseite aus weiter"],
+  ["16.09.", "Kleiner Feinschliff bei Design und Bedienung am Handy"],
   ["16.09.", "Neuer Reiter „Statistik“ mit der Zahl aller Seitenaufrufe"],
   ["09.09.", "Neuer Reiter „Ferien“ mit allen Ferien und Feiertagen"],
   ["09.09.", "Startet jetzt hell, Dunkelmodus per Schalter"],
@@ -116,6 +119,27 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* ign
 
 function darkOn() { return lsGet("theme") === "dark"; }
 function pinkyOn() { return lsGet("pinky") === "1"; }
+
+/* ----- Eigener Stundenplan (gemerkt) + zuletzt angesehene Schüler/innen ----- */
+function getMyStudent() {
+  try { return JSON.parse(lsGet("mySchueler") || "null"); } catch (e) { return null; }
+}
+function setMyStudent(cohort, nr) { lsSet("mySchueler", JSON.stringify({ cohort, nr })); }
+function clearMyStudent() { try { localStorage.removeItem("mySchueler"); } catch (e) { /* ignore */ } }
+function isMyStudent(cohort, nr) {
+  const my = getMyStudent();
+  return !!(my && my.cohort === cohort && my.nr === nr);
+}
+
+const RECENTS_MAX = 6;
+function getRecents() {
+  try { return JSON.parse(lsGet("recentStudents") || "[]"); } catch (e) { return []; }
+}
+function pushRecent(cohort, nr, name) {
+  let arr = getRecents().filter((r) => !(r.cohort === cohort && r.nr === nr));
+  arr.unshift({ cohort, nr, name });
+  lsSet("recentStudents", JSON.stringify(arr.slice(0, RECENTS_MAX)));
+}
 
 function applyDisplayModes() {
   const root = document.documentElement;
@@ -391,14 +415,24 @@ function renderHome() {
     (c.validFrom ? `<br>Plan gültig ab ${esc(c.validFrom)}` : "") +
     `</span></a>`).join("");
 
+  const my = getMyStudent();
+  const myInfo = my && cohortInfo(my.cohort);
+  const myCard = myInfo
+    ? `<a class="mine-card" href="#/${esc(my.cohort)}/s/${esc(my.nr)}">` +
+      `<span class="mine-card-ico" aria-hidden="true">⭐</span>` +
+      `<span><span class="mine-card-label">Weiter zu deinem Stundenplan</span>` +
+      `<span class="mine-card-sub">Gemerkt · ${esc(myInfo.label)}</span></span></a>`
+    : "";
+
   view.innerHTML =
     `<section class="home">` +
     `<h1 class="home-title"><span class="wm-web">web</span><span class="wm-main">Dumbis</span></h1>` +
     `<p class="lead">Die Schule gibt die Stundenpläne nur als PDF raus. Jedes Mal den ` +
     `eigenen Plan da rauszusuchen nervt, also habe ich das hier gebaut.</p>` +
-    `<p class="home-text">Namen oder Schülernummer eintippen, dann kommt der Stundenplan. ` +
-    `Man kann auch durch alle Kurse und Lehrkräfte gehen oder zwei Leute vergleichen und sehen, ` +
-    `welche Kurse sie zusammen haben. K1 und K2 laufen getrennt – oben umstellen.</p>` +
+    `<p class="home-text">Namen, Schülernummer, Kurskürzel oder Lehrkraft eintippen, dann kommt der ` +
+    `Stundenplan. Man kann auch zwei Leute vergleichen und sehen, welche Kurse sie zusammen haben. ` +
+    `K1 und K2 laufen getrennt – oben umstellen.</p>` +
+    myCard +
     `<h2 class="group-title">Stufe wählen</h2>` +
     `<div class="stufen">${chooser}</div>` +
     `<p class="disclaimer">Privates Projekt, nicht von der Schule und ohne Gewähr. Wenn hier was ` +
@@ -434,7 +468,7 @@ function renderHome() {
 }
 
 /* -------------------------------------------------------------------- search */
-function searchStudents(term) {
+function searchStudents(term, limit = MAX_RESULTS) {
   const nq = norm(term);
   const digits = term.replace(/\D/g, "").replace(/^0+/, "");
   const scored = [];
@@ -447,39 +481,87 @@ function searchStudents(term) {
     if (score >= 0) scored.push([score, s]);
   }
   scored.sort((a, b) => a[0] - b[0] || byName(a[1], b[1]));
-  return scored.slice(0, MAX_RESULTS).map((x) => x[1]);
+  return scored.slice(0, limit).map((x) => x[1]);
+}
+
+/* Globale Suche: Schüler/innen, Kurse und Lehrkräfte gemeinsam durchsuchen. */
+function searchAll(term) {
+  const nq = norm(term);
+  const students = searchStudents(term, 8);
+  const courses = cur.courses.filter((c) => {
+    const p = parseLabel(c.label, c.code);
+    return norm(c.code).includes(nq) || norm(p.desc).includes(nq) || norm(c.subject).includes(nq);
+  }).sort(courseSort).slice(0, 8);
+  const teachers = [...cur.coursesByTeacher.keys()].filter((t) => norm(t).includes(nq))
+    .sort((a, b) => deCmp(teacherKey(a), teacherKey(b))).slice(0, 8);
+  return { students, courses, teachers };
+}
+
+function teacherRow(t) {
+  const n = cur.coursesByTeacher.get(t).length;
+  return `<li><a href="${L("l", t)}"><span class="grow">${esc(t)}</span>` +
+    `<span class="tag">${n} Kurs${n === 1 ? "" : "e"}</span></a></li>`;
+}
+
+function recentsHtml() {
+  const recents = getRecents();
+  if (!recents.length) return "";
+  return `<h2 class="group-title">Zuletzt angesehen</h2><ul class="list">` +
+    recents.map((r) => {
+      const info = cohortInfo(r.cohort);
+      return `<li><a href="#/${esc(r.cohort)}/s/${esc(r.nr)}"><span class="grow">${esc(r.name)}</span>` +
+        (r.cohort !== cohortId && info ? `<span class="tag">${esc(info.label)}</span>` : "") +
+        `</a></li>`;
+    }).join("") + `</ul>`;
+}
+
+function searchResultsHtml(term) {
+  const { students, courses, teachers } = searchAll(term);
+  if (!students.length && !courses.length && !teachers.length) {
+    return `<p class="empty">Keine Treffer für „${esc(term)}“.</p>`;
+  }
+  let html = "";
+  if (students.length) {
+    html += `<h2 class="group-title">Schüler/innen</h2><ul class="list">` +
+      students.map(studentRow).join("") + `</ul>`;
+  }
+  if (courses.length) {
+    html += `<h2 class="group-title">Kurse</h2><ul class="list">` +
+      courses.map((c) => courseRow(c)).join("") + `</ul>`;
+  }
+  if (teachers.length) {
+    html += `<h2 class="group-title">Lehrkräfte</h2><ul class="list">` +
+      teachers.map(teacherRow).join("") + `</ul>`;
+  }
+  return html;
 }
 
 function renderSearch() {
   view.innerHTML =
-    `<h1>Schüler suchen</h1>` +
-    `<p class="sub">${esc(cur.info.label)} · Abi ${esc(cur.info.abi)}</p>` +
+    `<h1>Suche</h1>` +
+    `<p class="sub">${esc(cur.info.label)} · Abi ${esc(cur.info.abi)} · auch nach Kurs oder Lehrkraft</p>` +
     `<div class="search"><input type="search" id="q" autocomplete="off" ` +
-    `placeholder="Name oder Schülernummer …" aria-label="Schüler suchen"></div>` +
-    `<ul class="list" id="results" hidden></ul>` +
-    `<p class="empty" id="hint">Tippe einen Namen oder eine Nummer ein.</p>`;
+    `placeholder="Name, Nummer, Kurskürzel oder Lehrkraft …" aria-label="Suche"></div>` +
+    `<div id="results-area"></div>`;
 
   const q = document.getElementById("q");
-  const results = document.getElementById("results");
-  const hint = document.getElementById("hint");
+  const area = document.getElementById("results-area");
   if (!matchMobile()) q.focus();
 
-  q.addEventListener("input", () => {
-    const term = q.value.trim();
+  const paint = (term) => {
     if (!term) {
-      results.hidden = true; results.innerHTML = "";
-      hint.hidden = false; hint.textContent = "Tippe einen Namen oder eine Nummer ein.";
+      area.innerHTML = recentsHtml() ||
+        `<p class="empty">Tippe einen Namen, eine Nummer, ein Kurskürzel oder eine Lehrkraft ein.</p>`;
       return;
     }
-    const hits = searchStudents(term);
-    results.innerHTML = hits.map(studentRow).join("");
-    results.hidden = hits.length === 0;
-    hint.hidden = hits.length > 0;
-    if (hits.length === 0) hint.textContent = "Keine Treffer für „" + term + "“.";
-  });
+    area.innerHTML = searchResultsHtml(term);
+  };
+  paint("");
+
+  q.addEventListener("input", () => paint(q.value.trim()));
   q.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      const first = results.querySelector("a");
+      const first = area.querySelector("a");
       if (first) location.hash = first.getAttribute("href");
     }
   });
@@ -548,11 +630,7 @@ function renderCourseList() {
 /* --------------------------------------------------------------- teachers */
 function renderTeacherList() {
   const names = [...cur.coursesByTeacher.keys()].sort((a, b) => deCmp(teacherKey(a), teacherKey(b)));
-  const rows = names.map((t) => {
-    const n = cur.coursesByTeacher.get(t).length;
-    return `<li><a href="${L("l", t)}"><span class="grow">${esc(t)}</span>` +
-      `<span class="tag">${n} Kurs${n === 1 ? "" : "e"}</span></a></li>`;
-  }).join("");
+  const rows = names.map(teacherRow).join("");
   const missing = (meta.missingTeachers && meta.missingTeachers[cur.id]) || [];
   view.innerHTML =
     `<h1>Lehrkräfte</h1><p class="sub">${names.length} Lehrkräfte · ${esc(cur.info.label)}` +
@@ -666,19 +744,33 @@ function renderStatistik() {
 function renderStudent(nr, weekParam) {
   const s = cur.byNr.get(nr);
   if (!s) return notFound("schueler", "Schüler/innen", "Unbekannte Schülernummer.");
+  pushRecent(cohortId, nr, s.name);
   const maxP = lastUsedPeriod(s.timetable);
   const grp = groupLabel(s.klasse);
   const curMon = mondayOf(new Date());
   const start = weekParam && parseISO(weekParam) ? mondayOf(parseISO(weekParam)) : curMon;
   let week = clampMonday(start);
 
+  const mineLabel = (m) => (m ? "⭐ Dein gemerkter Plan" : "⭐ Als deinen Plan merken");
   view.innerHTML =
     backlink("schueler", "Schüler/innen") +
-    `<h1>${esc(s.name)}</h1>` +
+    `<div class="student-head"><h1>${esc(s.name)}</h1>` +
+    `<button type="button" class="toggle-btn mine-btn${isMyStudent(cohortId, nr) ? " mine-active" : ""}" ` +
+    `id="mineBtn" aria-pressed="${isMyStudent(cohortId, nr) ? "true" : "false"}">` +
+    `${mineLabel(isMyStudent(cohortId, nr))}</button></div>` +
     `<p class="sub">${esc(cur.info.label)} · Nr. ${esc(s.nr)}` +
     (grp ? ` · ${esc(grp)}` : "") +
     ` · <a href="${L("gemeinsam", s.nr)}">gemeinsame Kurse suchen</a></p>` +
     `<div id="ttWeek"></div>`;
+
+  const mineBtn = document.getElementById("mineBtn");
+  mineBtn.addEventListener("click", () => {
+    const nowMine = !isMyStudent(cohortId, nr);
+    if (nowMine) setMyStudent(cohortId, nr); else clearMyStudent();
+    mineBtn.textContent = mineLabel(nowMine);
+    mineBtn.classList.toggle("mine-active", nowMine);
+    mineBtn.setAttribute("aria-pressed", nowMine ? "true" : "false");
+  });
 
   const box = document.getElementById("ttWeek");
   const [lo, hi] = schoolBounds();
