@@ -441,6 +441,19 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 }
 .stat-label { color: var(--text-soft); font-size: 0.88rem; }
 
+.k1plan-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.65rem 1rem;
+}
+.k1plan-head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.k1plan-times {
+  color: var(--text-faint);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .changelog { margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-faint); }
 .changelog summary { cursor: pointer; font-weight: 650; width: max-content; }
 .changelog ul { list-style: none; margin: 0.5rem 0 0; padding: 0; }
