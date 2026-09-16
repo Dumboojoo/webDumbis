@@ -1,0 +1,5 @@
+{
+  "_comment": "Kurscodes umbenennen, wenn die Schule einen Kurs nach dem PDF-Druck umbenannt hat (Stundenplan und Lehrkraft bleiben gleich, nur der Code ändert sich, z. B. d2 -> d3). Pro Stufe: {\"alterCode\": {\"newCode\": \"neuerCode\", \"teacher\": \"Frau Name\"}}. \"teacher\" ist eine Sicherung: die Änderung greift nur, wenn die Lehrkraft im PDF exakt dazu passt. Am besten nicht von Hand raten, sondern build/check_course_codes.py laufen lassen – das vergleicht mit WebUntis und schlägt fertige Einträge vor.",
+  "k1": {},
+  "k2": {}
+}

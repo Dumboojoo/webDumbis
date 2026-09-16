@@ -41,7 +41,9 @@ data/k1/courses.json    Kursdaten K1
 data/k2/…               dasselbe für K2
 build/parse_pdfs.py     PDF-Konverter (nur lokal nötig)
 build/subjects.json     Fach-Kürzel → ausgeschriebener Name (von Hand pflegbar)
-build/course-teachers.json  Lehrkräfte korrigieren/nachtragen (von Hand)
+build/course-teachers.json      Lehrkräfte korrigieren/nachtragen (von Hand)
+build/course-code-overrides.json  Kurscodes umbenennen, wenn die Schule sie geändert hat
+build/check_course_codes.py     vergleicht eigene Kurse mit WebUntis, schlägt Umbenennungen vor (nur lokal)
 ```
 
 ## Ferien & Feiertage
@@ -77,6 +79,43 @@ trägt fehlende nach. Pro Kurscode:
 
 Nach dem Ändern `python3 build/parse_pdfs.py` erneut ausführen und `data/**` committen.
 Der Report zeigt an, welche Kurse korrigiert wurden und welche noch ohne Lehrkraft sind.
+
+## Kurscodes umbenennen (wenn die Schule den Code geändert hat)
+
+Manchmal ändert die Schule nach dem PDF-Druck den Code eines Kurses (Stundenplan und
+Lehrkraft bleiben gleich, z. B. wird aus `d2` `d3`) – im gedruckten PDF steht dann noch
+der alte Code, aktuell sichtbar ist das nur in WebUntis. `build/course-code-overrides.json`
+benennt solche Kurse beim Build um:
+
+```json
+"k2": {
+  "d2": { "newCode": "d3", "teacher": "Frau Moser" }
+}
+```
+
+`teacher` ist eine Sicherung: die Umbenennung greift nur, wenn die im PDF hinterlegte
+Lehrkraft exakt passt – sonst bricht `parse_pdfs.py` mit einer Warnung ab, statt etwas
+Falsches umzubenennen.
+
+Am besten trägt man diese Einträge nicht von Hand ein, sondern lässt sie sich vorschlagen:
+
+```
+pip3 install -r build/requirements.txt      # nur beim ersten Mal
+python3 build/check_course_codes.py
+```
+
+Das Skript loggt sich **lokal** (nicht im Browser – WebUntis blockt Cross-Origin,
+Zugangsdaten gehören nicht ins öffentliche Repo) mit dem eigenen WebUntis-Account ein,
+vergleicht die eigene aktuelle Wochen-Stunde für Stunde mit dem PDF-Stand und schlägt nur
+dort eine Umbenennung vor, wo die Lehrkraft übereinstimmt und nur der Code abweicht. Jeder
+Vorschlag muss einzeln bestätigt werden, bevor er in `course-code-overrides.json` landet.
+Beim ersten Start fragt es nach Schule, Login, Stufe und der eigenen
+webDumbis-Schülernummer und speichert das in `build/untis-config.json` (steht in
+`.gitignore`). Bei 2-Faktor-Anmeldung des WebUntis-Kontos klappt der Passwort-Login
+(noch) nicht.
+
+Danach wie gewohnt `python3 build/parse_pdfs.py` ausführen, den Report und `git diff` auf
+`data/**` querlesen und erst dann committen.
 
 ## Daten aktualisieren
 

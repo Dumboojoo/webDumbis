@@ -29,6 +29,7 @@ ASSETS_DIR = ROOT / "assets"
 DATA_DIR = ROOT / "data"
 SUBJECTS_FILE = Path(__file__).resolve().parent / "subjects.json"
 TEACHER_OVERRIDE_FILE = Path(__file__).resolve().parent / "course-teachers.json"
+CODE_OVERRIDE_FILE = Path(__file__).resolve().parent / "course-code-overrides.json"
 
 DAYS = ["Mo", "Di", "Mi", "Do", "Fr"]
 DAY_HEADERS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"]
@@ -51,6 +52,58 @@ def load_teacher_overrides() -> dict[str, dict[str, str]]:
         return {}
     raw = json.loads(TEACHER_OVERRIDE_FILE.read_text(encoding="utf-8"))
     return {k: v for k, v in raw.items() if not k.startswith("_") and isinstance(v, dict)}
+
+
+def load_code_overrides() -> dict[str, dict[str, dict]]:
+    if not CODE_OVERRIDE_FILE.exists():
+        return {}
+    raw = json.loads(CODE_OVERRIDE_FILE.read_text(encoding="utf-8"))
+    return {k: v for k, v in raw.items() if not k.startswith("_") and isinstance(v, dict)}
+
+
+def apply_code_overrides(courses: dict[str, dict], students: dict[str, dict],
+                         override: dict[str, dict], subjects: dict[str, str],
+                         unknown: set[str]) -> list[str]:
+    """build/course-code-overrides.json anwenden: Kurscode im PDF war zum Zeitpunkt
+    des Drucks korrekt, die Schule hat den Kurs seither aber umbenannt (z. B. d2 -> d3),
+    Stundenplan und Lehrkraft bleiben gleich. Nur Eintraege, die per WebUntis UND
+    passender Lehrkraft bestaetigt sind (siehe build/check_course_codes.py)."""
+    renamed = []
+    for old_code, spec in override.items():
+        if isinstance(spec, str):
+            spec = {"newCode": spec}
+        new_code = (spec.get("newCode") or "").strip()
+        expect_teacher = (spec.get("teacher") or "").strip()
+        if not new_code or old_code == new_code:
+            continue
+        c = courses.get(old_code)
+        if not c:
+            print(f"  ! Kurscode-Override {old_code} -> {new_code}: {old_code} kommt im PDF nicht vor, ignoriert.")
+            continue
+        if expect_teacher and c["teacher"] != expect_teacher:
+            print(f"  ! Kurscode-Override {old_code} -> {new_code} uebersprungen: "
+                  f"Lehrkraft im PDF ist {c['teacher']!r}, erwartet war {expect_teacher!r}.")
+            continue
+        if new_code in courses:
+            print(f"  ! Kurscode-Override {old_code} -> {new_code} uebersprungen: "
+                  f"{new_code} existiert im PDF bereits als eigener Kurs.")
+            continue
+
+        letters, kind, index = split_code(new_code)
+        c["code"] = new_code
+        c["kind"] = kind
+        c["subject"] = subjects.get(letters, c["subject"])
+        c["index"] = index
+        c["label"] = make_label(new_code, subjects, unknown)
+        courses[new_code] = courses.pop(old_code)
+        for s in students.values():
+            for day in DAYS:
+                for cell in s["timetable"][day]:
+                    if cell and cell["code"] == old_code:
+                        cell["code"] = new_code
+                        cell["label"] = c["label"]
+        renamed.append(f"{old_code} -> {new_code}")
+    return renamed
 
 
 def discover_cohorts():
@@ -278,10 +331,17 @@ def parse_grid(block, grid_top, grid_bottom, centers, courses, subjects, unknown
 
 # --------------------------------------------------------------------------- #
 def process_cohort(cohort: dict, subjects: dict[str, str],
-                   teacher_overrides: dict[str, dict[str, str]]) -> dict:
+                   teacher_overrides: dict[str, dict[str, str]],
+                   code_overrides: dict[str, dict[str, dict]]) -> dict:
     courses, unk_c = parse_kurslisten(cohort["kurslisten"], subjects)
     students, valid_from, unk_s, unmatched = parse_stundenplaene(
         cohort["stundenplan"], courses, subjects)
+
+    # build/course-code-overrides.json anwenden: von der Schule umbenannte Kurscodes
+    # (siehe apply_code_overrides) - vor den Lehrkraft-Overrides, die sich schon auf
+    # den neuen Code beziehen.
+    renamed_codes = apply_code_overrides(
+        courses, students, code_overrides.get(cohort["id"], {}), subjects, unk_c)
 
     # build/course-teachers.json anwenden: fehlende Lehrkraefte nachtragen ODER
     # falsche korrigieren. Eintrag pro Kurscode: "Frau Name" (nur Kursliste-Name)
@@ -332,7 +392,7 @@ def process_cohort(cohort: dict, subjects: dict[str, str],
         "studentCount": len(student_list), "courseCount": len(courses),
         "unknown": sorted(unk_c | unk_s), "unmatched": sorted(unmatched),
         "flagged": flagged, "empty": empty, "missingTeachers": missing_teachers,
-        "corrected": corrected,
+        "corrected": corrected, "renamedCodes": renamed_codes,
     }
 
 
@@ -344,12 +404,13 @@ def main():
 
     subjects = load_subjects()
     teacher_overrides = load_teacher_overrides()
+    code_overrides = load_code_overrides()
     DATA_DIR.mkdir(exist_ok=True)
     # Alte, nicht mehr genutzte Dateien im data/-Wurzelverzeichnis entfernen.
     for stale in ("students.json", "courses.json"):
         (DATA_DIR / stale).unlink(missing_ok=True)
 
-    results = [process_cohort(c, subjects, teacher_overrides) for c in cohorts]
+    results = [process_cohort(c, subjects, teacher_overrides, code_overrides) for c in cohorts]
 
     unknown = sorted({u for r in results for u in r["unknown"]})
     flagged = sorted({f for r in results for f in r["flagged"]})
@@ -379,6 +440,8 @@ def main():
             print(f"    WARNUNG Schueler ohne Stunden: {r['empty']}")
         for corr in r["corrected"]:
             print(f"    korrigiert (course-teachers.json): {corr}")
+        for ren in r["renamedCodes"]:
+            print(f"    umbenannt (course-code-overrides.json): {ren}")
     if unknown:
         print(f"UNBEKANNTE Fach-Kuerzel (in build/subjects.json ergaenzen): {unknown}")
     if flagged:
