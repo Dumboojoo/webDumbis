@@ -468,7 +468,7 @@
   {
    "code": "d2",
    "subject": "Deutsch",
-   "teacher": "",
+   "teacher": "Frau Mörk",
    "teacherAbbr": "Mör",
    "room": "A303",
    "times": [
@@ -489,7 +489,7 @@
   {
    "code": "d3",
    "subject": "Deutsch",
-   "teacher": "",
+   "teacher": "Frau Moser",
    "teacherAbbr": "Mos",
    "room": "C305",
    "times": [
@@ -1078,7 +1078,7 @@
   {
    "code": "m2",
    "subject": "Mathematik",
-   "teacher": "",
+   "teacher": "Herr Stelter",
    "teacherAbbr": "Ste",
    "room": "P3",
    "times": [
@@ -1149,7 +1149,7 @@
   {
    "code": "mus1",
    "subject": "Musik",
-   "teacher": "",
+   "teacher": "Herr Frank",
    "teacherAbbr": "Fra",
    "room": "Mu4",
    "times": [
@@ -1191,7 +1191,7 @@
   {
    "code": "ph1",
    "subject": "Physik",
-   "teacher": "",
+   "teacher": "Herr Stelter",
    "teacherAbbr": "Ste",
    "room": "P2",
    "times": [
