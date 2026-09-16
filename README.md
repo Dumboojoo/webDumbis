@@ -138,6 +138,17 @@ wie oben), holt den kompletten K1-Kursplan der aktuellen Woche direkt aus WebUnt
 schreibt ihn nach `data/k1/untis-plan.json`. Danach fragt es nach, ob gleich auf GitHub
 hochgeladen werden soll.
 
+WebUntis liefert den Kursnamen im Format `<Kurscode>_K1_<Lehrkraft-Kürzel>`
+(z. B. `spo2_K1_Gör`). `build/teacher-abbr.json` löst das Kürzel zum Klarnamen auf:
+
+```json
+{ "Gör": "Frau Görlich", "Hej": "Frau Herb", "Kne": "Herr Kneißle" }
+```
+
+Nur Kürzel eintragen, die bestätigt sind. Für alles andere zeigt der Reiter „K1 Plan"
+nur das rohe Kürzel als „noch nicht zugeordnet", und `fetch_k1_plan.py` listet unbekannte
+Kürzel am Ende noch mal extra auf.
+
 ## Daten aktualisieren
 
 Die PDFs in `assets/` müssen so heißen (das Skript erkennt Stufen automatisch am Namen):

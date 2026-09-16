@@ -795,11 +795,13 @@ function renderK1Plan() {
       body.innerHTML = courses.length
         ? `<ul class="list k1plan-list">` + courses.map((c) => {
             const lk = /^[A-ZÄÖÜ]/.test(c.code || "");
+            const teacherText = c.teacher ||
+              (c.teacherAbbr ? `Kürzel „${c.teacherAbbr}“ (noch nicht zugeordnet)` : "");
             return `<li class="k1plan-row">` +
               `<div class="k1plan-head">` +
               `<span class="badge badge-${lk ? "lk" : "bk"}">${esc(c.code || "?")}</span>` +
               `<span class="crow-title">${esc(c.subject || "")}</span>` +
-              `<span class="crow-teacher">${esc(c.teacher || "")}</span>` +
+              `<span class="crow-teacher${c.teacher ? "" : " crow-teacher-none"}">${esc(teacherText)}</span>` +
               `</div>` +
               `<div class="k1plan-times">${esc(fmtTimes(c.times))}` +
               `${c.room ? ` · ${esc(c.room)}` : ""}</div></li>`;

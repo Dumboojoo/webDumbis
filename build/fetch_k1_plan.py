@@ -32,9 +32,27 @@ except ImportError:
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 CONFIG = Path(__file__).resolve().parent / "untis-config.json"
+ABBR_FILE = Path(__file__).resolve().parent / "teacher-abbr.json"
 SCHOOLQUERY = "https://mobile.webuntis.com/ms/schoolquery2"
 DAYS = ["Mo", "Di", "Mi", "Do", "Fr"]
 KLASSE_NAME = "K1"
+
+
+def load_abbr_map() -> dict[str, str]:
+    if not ABBR_FILE.exists():
+        return {}
+    raw = json.loads(ABBR_FILE.read_text(encoding="utf-8"))
+    return {k: v for k, v in raw.items() if not k.startswith("_")}
+
+
+def split_untis_code(raw: str) -> tuple[str, str]:
+    """WebUntis liefert den Kursnamen als "<Kurscode>_K1_<Lehrkraft-Kürzel>",
+    z. B. "spo2_K1_Gör" -> ("spo2", "Gör"). Passt das Format nicht, bleibt der
+    ganze Rohwert der Code und das Kürzel leer."""
+    parts = raw.split("_")
+    if len(parts) >= 2 and parts[0] and parts[-1]:
+        return parts[0], parts[-1]
+    return raw, ""
 
 
 # --------------------------------------------------------------------- Setup
@@ -163,7 +181,7 @@ def find_klasse(session, wanted: str):
 
 
 # ------------------------------------------------------------------- Abholen
-def fetch_plan(session, klasse, pmap) -> list[dict]:
+def fetch_plan(session, klasse, pmap, abbr_map: dict[str, str]) -> tuple[list[dict], set[str]]:
     monday = date.today() - timedelta(days=date.today().weekday())
     periods = None
     for w in range(4):  # notfalls bis zu 4 Wochen weitersuchen (Ferienwoche o.ä.)
@@ -180,22 +198,33 @@ def fetch_plan(session, klasse, pmap) -> list[dict]:
         sys.exit("Keine Stunden in den nächsten 4 Wochen gefunden (Ferien?). Später nochmal versuchen.")
 
     courses: dict[str, dict] = {}
+    unresolved: set[str] = set()
     for p in periods:
         day_idx = p.start.weekday()
         if day_idx > 4:
             continue
         pn = period_number(pmap, p.start)
         en = period_number(pmap, p.end - timedelta(minutes=1)) or pn
-        code = (getattr(p, "studentGroup", "") or "").strip()
+        raw_code = (getattr(p, "studentGroup", "") or "").strip()
+        code, abbr = split_untis_code(raw_code) if raw_code else ("", "")
         subj = getattr(p.subjects[0], "long_name", "") if getattr(p, "subjects", None) else ""
         subj_short = getattr(p.subjects[0], "name", "") if getattr(p, "subjects", None) else ""
-        teacher = getattr(p.teachers[0], "surname", "") if getattr(p, "teachers", None) else ""
+        api_teacher = getattr(p.teachers[0], "surname", "") if getattr(p, "teachers", None) else ""
         room = getattr(p.rooms[0], "name", "") if getattr(p, "rooms", None) else ""
 
-        key = code or f"{subj_short}-{teacher}"
+        # Lehrkraft: bevorzugt über das bestaetigte Kuerzel (build/teacher-abbr.json)
+        # aufloesen - nicht raten. Nur wenn das Kuerzel fehlt, den rohen WebUntis-
+        # Lehrkraft-Namen als Notloesung nehmen.
+        teacher = abbr_map.get(abbr, "") if abbr else ""
+        if not teacher and abbr:
+            unresolved.add(abbr)
+        if not teacher and not abbr:
+            teacher = api_teacher
+
+        key = code or f"{subj_short}-{abbr or api_teacher}"
         c = courses.setdefault(key, {
             "code": code or subj_short, "subject": subj or subj_short,
-            "teacher": teacher, "room": room, "times": [],
+            "teacher": teacher, "teacherAbbr": abbr, "room": room, "times": [],
         })
         for x in range(pn, max(pn, en) + 1):
             slot = {"day": DAYS[day_idx], "period": x}
@@ -204,7 +233,7 @@ def fetch_plan(session, klasse, pmap) -> list[dict]:
 
     for c in courses.values():
         c["times"].sort(key=lambda t: (DAYS.index(t["day"]), t["period"]))
-    return sorted(courses.values(), key=lambda c: (c["code"] or "").lower())
+    return sorted(courses.values(), key=lambda c: (c["code"] or "").lower()), unresolved
 
 
 def git_push() -> None:
@@ -235,10 +264,11 @@ def main():
         sys.exit(f"Login fehlgeschlagen: {e}\n"
                  f"Prüfe Benutzername/Passwort in build/untis-config.json.")
 
+    abbr_map = load_abbr_map()
     try:
         pmap = build_period_map(session)
         klasse = find_klasse(session, KLASSE_NAME)
-        courses = fetch_plan(session, klasse, pmap)
+        courses, unresolved = fetch_plan(session, klasse, pmap, abbr_map)
     finally:
         try:
             session.logout()
@@ -257,7 +287,12 @@ def main():
     print(f"{len(courses)} Kurse ({klasse.name}):")
     for c in courses:
         times = fmt_times(c["times"])
-        print(f"  {c['code']:<8} {c['subject']:<22} {c['teacher']:<18} {c['room']:<6} {times}")
+        teacher = c["teacher"] or (f"? ({c['teacherAbbr']})" if c["teacherAbbr"] else "")
+        print(f"  {c['code']:<8} {c['subject']:<22} {teacher:<20} {c['room']:<6} {times}")
+
+    if unresolved:
+        print(f"\nUnbekannte Lehrkraft-Kürzel (in build/teacher-abbr.json ergänzen): "
+              f"{', '.join(sorted(unresolved))}")
 
     if input("\nJetzt auf GitHub hochladen? [J/n] ").strip().lower() in ("", "j", "y"):
         git_push()

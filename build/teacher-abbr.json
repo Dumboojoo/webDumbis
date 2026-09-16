@@ -1,0 +1,6 @@
+{
+  "_comment": "Lehrkraft-Kürzel aus dem K1-WebUntis-Kursnamen (Format \"<Kurscode>_K1_<Kürzel>\", z. B. \"spo2_K1_Gör\") -> Klarname. Nur Kürzel eintragen, die du selbst bestätigt hast; für alles andere zeigt der Reiter „K1 Plan“ nur das rohe Kürzel und build/fetch_k1_plan.py meldet es am Ende als offen.",
+  "Gör": "Frau Görlich",
+  "Hej": "Frau Herb",
+  "Kne": "Herr Kneißle"
+}
