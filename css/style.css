@@ -396,6 +396,25 @@ h2 { margin: 0; font-size: 1.12rem; font-weight: 700; }
 .stufe-meta { display: block; margin-top: 0.3rem; color: var(--text-soft); font-size: 0.88rem; }
 .disclaimer { color: var(--text-faint); font-size: 0.83rem; line-height: 1.55; }
 
+.stat-card {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1.4rem 1.75rem;
+  margin: 0.5rem 0 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.stat-num {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.stat-label { color: var(--text-soft); font-size: 0.88rem; }
+
 .changelog { margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-faint); }
 .changelog summary { cursor: pointer; font-weight: 650; width: max-content; }
 .changelog ul { list-style: none; margin: 0.5rem 0 0; padding: 0; }

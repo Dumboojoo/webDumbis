@@ -34,6 +34,8 @@ const ICONS = {
   more: I(`<circle cx="5" cy="12" r="1.5" fill="currentColor"/>` +
     `<circle cx="12" cy="12" r="1.5" fill="currentColor"/>` +
     `<circle cx="19" cy="12" r="1.5" fill="currentColor"/>`),
+  chart: I(`<path d="M4 20V10"/><path d="M11 20V4"/><path d="M18 20v-7"/>` +
+    `<path d="M3 20h18"/>`),
 };
 const NAV = [
   { id: "suche", label: "Suche", short: "Suche", icon: "search", where: "both" },
@@ -42,12 +44,24 @@ const NAV = [
   { id: "gemeinsam", label: "Gemeinsame Kurse", short: "Gemeinsam", icon: "venn", where: "both" },
   { id: "ferien", label: "Ferien", short: "Ferien", icon: "sun", where: "more" },
   { id: "lehrer", label: "Lehrkräfte", short: "Lehrer", icon: "cap", where: "more" },
+  { id: "statistik", label: "Statistik", short: "Statistik", icon: "chart", where: "more" },
 ];
+
+/* Seitenaufrufe: gezählt über GoatCounter (kein Cookie, keine Einwilligung nötig). */
+const GOATCOUNTER_SITE = "dumboojoo";
+(function loadGoatCounter() {
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = "//gc.zgo.at/count.js";
+  s.setAttribute("data-goatcounter", `https://${GOATCOUNTER_SITE}.goatcounter.com/count`);
+  document.head.appendChild(s);
+})();
 // "more"-Einträge stehen am Desktop in der Seitenleiste, am Handy im "Mehr"-Menü.
 const MORE_NAV = NAV.filter((n) => n.where === "more").map((n) => n.id);
 
 /* Kleiner Änderungs-Log für die Startseite – neuste zuerst, von Hand pflegen. */
 const CHANGELOG = [
+  ["16.09.", "Neuer Reiter „Statistik“ mit der Zahl aller Seitenaufrufe"],
   ["09.09.", "Neuer Reiter „Ferien“ mit allen Ferien und Feiertagen"],
   ["09.09.", "Startet jetzt hell, Dunkelmodus per Schalter"],
   ["09.09.", "Zwischen Wochen wechseln – mit Datum und Ferien"],
@@ -357,6 +371,7 @@ async function route() {
     case "gemeinsam": renderShared(a, b); break;
     case "ferien": renderFerien(); break;
     case "lehrer": renderTeacherList(); break;
+    case "statistik": renderStatistik(); break;
     case "s": renderStudent(a, week); activeNav = "schueler"; break;
     case "k": renderCourse(a); activeNav = "kurse"; break;
     case "l": renderTeacher(a); activeNav = "lehrer"; break;
@@ -623,6 +638,28 @@ function renderFerien() {
       : `<p class="empty">Noch keine Ferien hinterlegt.</p>`) +
     `<p class="disclaimer">Ohne Gewähr. Die beweglichen Ferientage der Schule fehlen ` +
     `hier vielleicht noch – im Zweifel gilt der Jahresplan der Schule.</p>`;
+}
+
+/* ------------------------------------------------------------ Statistik-Ansicht */
+function renderStatistik() {
+  view.innerHTML =
+    `<h1>Statistik</h1>` +
+    `<p class="sub">Wie oft webDumbis besucht wurde</p>` +
+    `<div class="stat-card"><span class="stat-num" id="statCount">…</span>` +
+    `<span class="stat-label">Seitenaufrufe insgesamt</span></div>` +
+    `<p class="disclaimer">Gezählt mit GoatCounter – ohne Cookies und ohne ` +
+    `personenbezogene Daten, deshalb ganz ohne Einwilligung.</p>`;
+
+  fetch(`https://${GOATCOUNTER_SITE}.goatcounter.com/counter/TOTAL.json`)
+    .then((r) => r.json())
+    .then((d) => {
+      const el = document.getElementById("statCount");
+      if (el) el.textContent = d && d.count ? d.count : "–";
+    })
+    .catch(() => {
+      const el = document.getElementById("statCount");
+      if (el) el.textContent = "–";
+    });
 }
 
 /* --------------------------------------------------------- student profile */
