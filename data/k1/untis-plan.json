@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-16 22:49",
+ "generatedAt": "2026-09-16 22:56",
  "source": "WebUntis",
  "className": "K1",
  "courses": [
@@ -49,7 +49,7 @@
    "code": "BB",
    "subject": "Big Band - Klasse 9-K2",
    "teacher": "",
-   "teacherAbbr": "Sta",
+   "teacherAbbr": "",
    "room": "Mu1",
    "times": [
     {
@@ -352,7 +352,7 @@
    "code": "CHOR9K2",
    "subject": "Chor - Klasse 9-K2",
    "teacher": "",
-   "teacherAbbr": "Fra",
+   "teacherAbbr": "",
    "room": "Mu4",
    "times": [
     {
@@ -1167,7 +1167,7 @@
    "code": "ORCH",
    "subject": "Orchester",
    "teacher": "",
-   "teacherAbbr": "Rei",
+   "teacherAbbr": "",
    "room": "Mu2",
    "times": [
     {
