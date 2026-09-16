@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-16 22:39",
+ "generatedAt": "2026-09-16 22:49",
  "source": "WebUntis",
  "className": "K1",
  "courses": [
@@ -7,6 +7,7 @@
    "code": "",
    "subject": "",
    "teacher": "",
+   "teacherAbbr": "",
    "room": "Aula",
    "times": [
     {
@@ -23,6 +24,7 @@
    "code": "AG-TH-9-K2",
    "subject": "Theater AG 9-K2",
    "teacher": "",
+   "teacherAbbr": "",
    "room": "",
    "times": [
     {
@@ -44,9 +46,10 @@
    ]
   },
   {
-   "code": "BB_Sta",
+   "code": "BB",
    "subject": "Big Band - Klasse 9-K2",
    "teacher": "",
+   "teacherAbbr": "Sta",
    "room": "Mu1",
    "times": [
     {
@@ -68,9 +71,43 @@
    ]
   },
   {
-   "code": "bio1_K1_Bur",
+   "code": "BIO1",
    "subject": "Biologie",
    "teacher": "",
+   "teacherAbbr": "Küs",
+   "room": "B2",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Mi",
+     "period": 1
+    },
+    {
+     "day": "Mi",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "bio1",
+   "subject": "Biologie",
+   "teacher": "",
+   "teacherAbbr": "Bur",
    "room": "B3",
    "times": [
     {
@@ -92,65 +129,10 @@
    ]
   },
   {
-   "code": "BIO1_K1_Küs",
+   "code": "BIO2",
    "subject": "Biologie",
    "teacher": "",
-   "room": "B2",
-   "times": [
-    {
-     "day": "Di",
-     "period": 3
-    },
-    {
-     "day": "Di",
-     "period": 4
-    },
-    {
-     "day": "Mi",
-     "period": 1
-    },
-    {
-     "day": "Mi",
-     "period": 2
-    },
-    {
-     "day": "Fr",
-     "period": 1
-    },
-    {
-     "day": "Fr",
-     "period": 2
-    }
-   ]
-  },
-  {
-   "code": "bio2_K1_Fis",
-   "subject": "Biologie",
-   "teacher": "",
-   "room": "B2",
-   "times": [
-    {
-     "day": "Mo",
-     "period": 5
-    },
-    {
-     "day": "Mo",
-     "period": 6
-    },
-    {
-     "day": "Do",
-     "period": 1
-    },
-    {
-     "day": "Do",
-     "period": 2
-    }
-   ]
-  },
-  {
-   "code": "BIO2_K1_Mav",
-   "subject": "Biologie",
-   "teacher": "",
+   "teacherAbbr": "Mav",
    "room": "NWT",
    "times": [
     {
@@ -180,9 +162,35 @@
    ]
   },
   {
-   "code": "bk1_K1_Roo",
+   "code": "bio2",
+   "subject": "Biologie",
+   "teacher": "",
+   "teacherAbbr": "Fis",
+   "room": "B2",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 5
+    },
+    {
+     "day": "Mo",
+     "period": 6
+    },
+    {
+     "day": "Do",
+     "period": 1
+    },
+    {
+     "day": "Do",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "bk1",
    "subject": "Bildende Kunst",
    "teacher": "",
+   "teacherAbbr": "Roo",
    "room": "Wk",
    "times": [
     {
@@ -196,9 +204,10 @@
    ]
   },
   {
-   "code": "BK1_K1_Ten",
+   "code": "BK1",
    "subject": "Bildende Kunst",
    "teacher": "",
+   "teacherAbbr": "Ten",
    "room": "BK1",
    "times": [
     {
@@ -236,9 +245,10 @@
    ]
   },
   {
-   "code": "bk2_K1_Roo",
+   "code": "bk2",
    "subject": "Bildende Kunst",
    "teacher": "",
+   "teacherAbbr": "Roo",
    "room": "Wk",
    "times": [
     {
@@ -260,9 +270,10 @@
    ]
   },
   {
-   "code": "ch1_K1_Gün",
+   "code": "ch1",
    "subject": "Chemie",
    "teacher": "",
+   "teacherAbbr": "Gün",
    "room": "C2",
    "times": [
     {
@@ -284,9 +295,10 @@
    ]
   },
   {
-   "code": "CH1_K1_Klk",
+   "code": "CH1",
    "subject": "Chemie",
    "teacher": "",
+   "teacherAbbr": "Klk",
    "room": "C1",
    "times": [
     {
@@ -316,9 +328,10 @@
    ]
   },
   {
-   "code": "ch2_K1_Hös",
+   "code": "ch2",
    "subject": "Chemie",
    "teacher": "",
+   "teacherAbbr": "Hös",
    "room": "C1",
    "times": [
     {
@@ -336,9 +349,10 @@
    ]
   },
   {
-   "code": "CHOR9K2_Fra",
+   "code": "CHOR9K2",
    "subject": "Chor - Klasse 9-K2",
    "teacher": "",
+   "teacherAbbr": "Fra",
    "room": "Mu4",
    "times": [
     {
@@ -363,6 +377,7 @@
    "code": "CourAGe",
    "subject": "Courage-AG",
    "teacher": "",
+   "teacherAbbr": "",
    "room": "A201",
    "times": [
     {
@@ -372,29 +387,10 @@
    ]
   },
   {
-   "code": "d1_K1_Höl",
+   "code": "D1",
    "subject": "Deutsch",
    "teacher": "",
-   "room": "A501",
-   "times": [
-    {
-     "day": "Mo",
-     "period": 2
-    },
-    {
-     "day": "Mi",
-     "period": 5
-    },
-    {
-     "day": "Mi",
-     "period": 6
-    }
-   ]
-  },
-  {
-   "code": "D1_K1_Lob",
-   "subject": "Deutsch",
-   "teacher": "",
+   "teacherAbbr": "Lob",
    "room": "C203",
    "times": [
     {
@@ -420,10 +416,11 @@
    ]
   },
   {
-   "code": "d2_K1_Mör",
+   "code": "d1",
    "subject": "Deutsch",
    "teacher": "",
-   "room": "A303",
+   "teacherAbbr": "Höl",
+   "room": "A501",
    "times": [
     {
      "day": "Mo",
@@ -440,9 +437,10 @@
    ]
   },
   {
-   "code": "D2_K1_Pf",
+   "code": "D2",
    "subject": "Deutsch",
    "teacher": "",
+   "teacherAbbr": "Pf",
    "room": "A202",
    "times": [
     {
@@ -468,9 +466,52 @@
    ]
   },
   {
-   "code": "D3_K1_Bak",
+   "code": "d2",
    "subject": "Deutsch",
    "teacher": "",
+   "teacherAbbr": "Mör",
+   "room": "A303",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "d3",
+   "subject": "Deutsch",
+   "teacher": "",
+   "teacherAbbr": "Mos",
+   "room": "C305",
+   "times": [
+    {
+     "day": "Mo",
+     "period": 2
+    },
+    {
+     "day": "Mi",
+     "period": 5
+    },
+    {
+     "day": "Mi",
+     "period": 6
+    }
+   ]
+  },
+  {
+   "code": "D3",
+   "subject": "Deutsch",
+   "teacher": "",
+   "teacherAbbr": "Bak",
    "room": "A301",
    "times": [
     {
@@ -496,29 +537,10 @@
    ]
   },
   {
-   "code": "d3_K1_Mos",
-   "subject": "Deutsch",
-   "teacher": "",
-   "room": "C305",
-   "times": [
-    {
-     "day": "Mo",
-     "period": 2
-    },
-    {
-     "day": "Mi",
-     "period": 5
-    },
-    {
-     "day": "Mi",
-     "period": 6
-    }
-   ]
-  },
-  {
-   "code": "E1_K1_Her",
+   "code": "E1",
    "subject": "Englisch",
    "teacher": "",
+   "teacherAbbr": "Her",
    "room": "B1",
    "times": [
     {
@@ -548,9 +570,10 @@
    ]
   },
   {
-   "code": "e1_K1_Vog",
+   "code": "e1",
    "subject": "Englisch",
    "teacher": "",
+   "teacherAbbr": "Vog",
    "room": "C205",
    "times": [
     {
@@ -572,9 +595,10 @@
    ]
   },
   {
-   "code": "E2_K1_Fri",
+   "code": "E2",
    "subject": "Englisch",
    "teacher": "",
+   "teacherAbbr": "Fri",
    "room": "C304",
    "times": [
     {
@@ -600,9 +624,10 @@
    ]
   },
   {
-   "code": "e2_K1_Sor",
+   "code": "e2",
    "subject": "Englisch",
    "teacher": "",
+   "teacherAbbr": "Sor",
    "room": "A408",
    "times": [
     {
@@ -620,9 +645,10 @@
    ]
   },
   {
-   "code": "eth1_K1_Wej",
+   "code": "eth1",
    "subject": "Ethik",
    "teacher": "",
+   "teacherAbbr": "Wej",
    "room": "E405",
    "times": [
     {
@@ -636,9 +662,10 @@
    ]
   },
   {
-   "code": "f1_K1_Sdr",
+   "code": "f1",
    "subject": "Französisch",
    "teacher": "",
+   "teacherAbbr": "Sdr",
    "room": "A503",
    "times": [
     {
@@ -656,9 +683,10 @@
    ]
   },
   {
-   "code": "g1_K1_Gül",
+   "code": "g1",
    "subject": "Geschichte",
    "teacher": "",
+   "teacherAbbr": "Gül",
    "room": "A408",
    "times": [
     {
@@ -672,9 +700,10 @@
    ]
   },
   {
-   "code": "G1_K1_Höl",
+   "code": "G1",
    "subject": "Geschichte",
    "teacher": "",
+   "teacherAbbr": "Höl",
    "room": "A501",
    "times": [
     {
@@ -696,9 +725,10 @@
    ]
   },
   {
-   "code": "g2_K1_Wej",
+   "code": "g2",
    "subject": "Geschichte",
    "teacher": "",
+   "teacherAbbr": "Wej",
    "room": "E403",
    "times": [
     {
@@ -712,9 +742,10 @@
    ]
   },
   {
-   "code": "g3_K1_Sef",
+   "code": "g3",
    "subject": "Geschichte",
    "teacher": "",
+   "teacherAbbr": "Sef",
    "room": "B2",
    "times": [
     {
@@ -728,9 +759,10 @@
    ]
   },
   {
-   "code": "g4_K1_Wap",
+   "code": "g4",
    "subject": "Geschichte",
    "teacher": "",
+   "teacherAbbr": "Wap",
    "room": "E405",
    "times": [
     {
@@ -744,9 +776,10 @@
    ]
   },
   {
-   "code": "geo1_K1_Küh",
+   "code": "geo1",
    "subject": "Geographie (Erdkunde)",
    "teacher": "",
+   "teacherAbbr": "Küh",
    "room": "A503",
    "times": [
     {
@@ -760,9 +793,10 @@
    ]
   },
   {
-   "code": "GEO1_K1_Sch",
+   "code": "GEO1",
    "subject": "Geographie (Erdkunde)",
    "teacher": "",
+   "teacherAbbr": "Sch",
    "room": "A301",
    "times": [
     {
@@ -800,9 +834,10 @@
    ]
   },
   {
-   "code": "geo2_K1_Ros",
+   "code": "geo2",
    "subject": "Geographie (Erdkunde)",
    "teacher": "",
+   "teacherAbbr": "Ros",
    "room": "A302",
    "times": [
     {
@@ -816,9 +851,10 @@
    ]
   },
   {
-   "code": "geo3_K1_Ros",
+   "code": "geo3",
    "subject": "Geographie (Erdkunde)",
    "teacher": "",
+   "teacherAbbr": "Ros",
    "room": "A403",
    "times": [
     {
@@ -840,9 +876,10 @@
    ]
   },
   {
-   "code": "geo4_K1_Eng",
+   "code": "geo4",
    "subject": "Geographie (Erdkunde)",
    "teacher": "",
+   "teacherAbbr": "Eng",
    "room": "NWT",
    "times": [
     {
@@ -856,9 +893,10 @@
    ]
   },
   {
-   "code": "I1_K1_Sdr",
+   "code": "I1",
    "subject": "Italienisch",
    "teacher": "",
+   "teacherAbbr": "Sdr",
    "room": "C306",
    "times": [
     {
@@ -888,9 +926,10 @@
    ]
   },
   {
-   "code": "l1_K1_Hej",
+   "code": "l1",
    "subject": "Latein",
-   "teacher": "",
+   "teacher": "Frau Herb",
+   "teacherAbbr": "Hej",
    "room": "BK1",
    "times": [
     {
@@ -908,9 +947,10 @@
    ]
   },
   {
-   "code": "lit1_K1_Ten",
+   "code": "lit1",
    "subject": "Literatur",
    "teacher": "",
+   "teacherAbbr": "Ten",
    "room": "BK2",
    "times": [
     {
@@ -932,9 +972,10 @@
    ]
   },
   {
-   "code": "lut1_K1_Ten",
+   "code": "lut1",
    "subject": "Literatur und Theater",
    "teacher": "",
+   "teacherAbbr": "Ten",
    "room": "BK2",
    "times": [
     {
@@ -956,9 +997,10 @@
    ]
   },
   {
-   "code": "M1_K1_Frk",
+   "code": "M1",
    "subject": "Mathematik",
    "teacher": "",
+   "teacherAbbr": "Frk",
    "room": "A404",
    "times": [
     {
@@ -984,9 +1026,10 @@
    ]
   },
   {
-   "code": "m1_K1_Wan",
+   "code": "m1",
    "subject": "Mathematik",
    "teacher": "",
+   "teacherAbbr": "Wan",
    "room": "C305",
    "times": [
     {
@@ -1004,9 +1047,10 @@
    ]
   },
   {
-   "code": "M2_K1_Kne",
+   "code": "M2",
    "subject": "Mathematik",
-   "teacher": "",
+   "teacher": "Herr Kneißle",
+   "teacherAbbr": "Kne",
    "room": "A303",
    "times": [
     {
@@ -1032,9 +1076,10 @@
    ]
   },
   {
-   "code": "m2_K1_Ste",
+   "code": "m2",
    "subject": "Mathematik",
    "teacher": "",
+   "teacherAbbr": "Ste",
    "room": "P3",
    "times": [
     {
@@ -1052,9 +1097,31 @@
    ]
   },
   {
-   "code": "M3_K1_Hei",
+   "code": "m3",
    "subject": "Mathematik",
    "teacher": "",
+   "teacherAbbr": "Web",
+   "room": "A402",
+   "times": [
+    {
+     "day": "Do",
+     "period": 3
+    },
+    {
+     "day": "Do",
+     "period": 4
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "M3",
+   "subject": "Mathematik",
+   "teacher": "",
+   "teacherAbbr": "Hei",
    "room": "P3",
    "times": [
     {
@@ -1080,29 +1147,10 @@
    ]
   },
   {
-   "code": "m3_K1_Web",
-   "subject": "Mathematik",
-   "teacher": "",
-   "room": "A402",
-   "times": [
-    {
-     "day": "Do",
-     "period": 3
-    },
-    {
-     "day": "Do",
-     "period": 4
-    },
-    {
-     "day": "Fr",
-     "period": 2
-    }
-   ]
-  },
-  {
-   "code": "mus1_K1_Fra",
+   "code": "mus1",
    "subject": "Musik",
    "teacher": "",
+   "teacherAbbr": "Fra",
    "room": "Mu4",
    "times": [
     {
@@ -1116,9 +1164,10 @@
    ]
   },
   {
-   "code": "ORCH_Rei",
+   "code": "ORCH",
    "subject": "Orchester",
    "teacher": "",
+   "teacherAbbr": "Rei",
    "room": "Mu2",
    "times": [
     {
@@ -1140,41 +1189,10 @@
    ]
   },
   {
-   "code": "PH1_K1_Mau",
+   "code": "ph1",
    "subject": "Physik",
    "teacher": "",
-   "room": "P1",
-   "times": [
-    {
-     "day": "Di",
-     "period": 3
-    },
-    {
-     "day": "Di",
-     "period": 4
-    },
-    {
-     "day": "Mi",
-     "period": 1
-    },
-    {
-     "day": "Mi",
-     "period": 2
-    },
-    {
-     "day": "Fr",
-     "period": 1
-    },
-    {
-     "day": "Fr",
-     "period": 2
-    }
-   ]
-  },
-  {
-   "code": "ph1_K1_Ste",
-   "subject": "Physik",
-   "teacher": "",
+   "teacherAbbr": "Ste",
    "room": "P2",
    "times": [
     {
@@ -1196,9 +1214,43 @@
    ]
   },
   {
-   "code": "ph2_K1_Köv",
+   "code": "PH1",
    "subject": "Physik",
    "teacher": "",
+   "teacherAbbr": "Mau",
+   "room": "P1",
+   "times": [
+    {
+     "day": "Di",
+     "period": 3
+    },
+    {
+     "day": "Di",
+     "period": 4
+    },
+    {
+     "day": "Mi",
+     "period": 1
+    },
+    {
+     "day": "Mi",
+     "period": 2
+    },
+    {
+     "day": "Fr",
+     "period": 1
+    },
+    {
+     "day": "Fr",
+     "period": 2
+    }
+   ]
+  },
+  {
+   "code": "ph2",
+   "subject": "Physik",
+   "teacher": "",
+   "teacherAbbr": "Köv",
    "room": "P1",
    "times": [
     {
@@ -1220,9 +1272,10 @@
    ]
   },
   {
-   "code": "psy1_K1_Hes",
+   "code": "psy1",
    "subject": "Psychologie",
    "teacher": "",
+   "teacherAbbr": "Hes",
    "room": "A203",
    "times": [
     {
@@ -1244,9 +1297,10 @@
    ]
   },
   {
-   "code": "psy2_K1_Roo",
+   "code": "psy2",
    "subject": "Psychologie",
    "teacher": "",
+   "teacherAbbr": "Roo",
    "room": "Wk",
    "times": [
     {
@@ -1268,9 +1322,10 @@
    ]
   },
   {
-   "code": "rev1_K1_Sef",
+   "code": "rev1",
    "subject": "evang. Religionslehre",
    "teacher": "",
+   "teacherAbbr": "Sef",
    "room": "C304",
    "times": [
     {
@@ -1284,9 +1339,10 @@
    ]
   },
   {
-   "code": "rev2_K1_Swa",
+   "code": "rev2",
    "subject": "evang. Religionslehre",
    "teacher": "",
+   "teacherAbbr": "Swa",
    "room": "E402",
    "times": [
     {
@@ -1300,9 +1356,10 @@
    ]
   },
   {
-   "code": "rrk1_K1_Wap",
+   "code": "rrk1",
    "subject": "kath. Religionslehre",
    "teacher": "",
+   "teacherAbbr": "Wap",
    "room": "E403",
    "times": [
     {
@@ -1316,9 +1373,10 @@
    ]
   },
   {
-   "code": "semk1_K1",
+   "code": "semk1",
    "subject": "Seminarkurs",
    "teacher": "",
+   "teacherAbbr": "K1",
    "room": "A402",
    "times": [
     {
@@ -1340,9 +1398,10 @@
    ]
   },
   {
-   "code": "semk2_K1",
+   "code": "semk2",
    "subject": "Seminarkurs",
    "teacher": "",
+   "teacherAbbr": "K1",
    "room": "A408",
    "times": [
     {
@@ -1364,9 +1423,10 @@
    ]
   },
   {
-   "code": "spo1_K1_Hej",
+   "code": "spo1",
    "subject": "Sport",
-   "teacher": "",
+   "teacher": "Frau Herb",
+   "teacherAbbr": "Hej",
    "room": "H1",
    "times": [
     {
@@ -1380,9 +1440,10 @@
    ]
   },
   {
-   "code": "SPO1_K1_Rom",
+   "code": "SPO1",
    "subject": "Sport",
    "teacher": "",
+   "teacherAbbr": "Rom",
    "room": "A303",
    "times": [
     {
@@ -1420,9 +1481,10 @@
    ]
   },
   {
-   "code": "spo2_K1_Gör",
+   "code": "spo2",
    "subject": "Sport",
-   "teacher": "",
+   "teacher": "Frau Görlich",
+   "teacherAbbr": "Gör",
    "room": "H1",
    "times": [
     {
@@ -1444,9 +1506,10 @@
    ]
   },
   {
-   "code": "spo3_K1_Hes",
+   "code": "spo3",
    "subject": "Sport",
    "teacher": "",
+   "teacherAbbr": "Hes",
    "room": "H2",
    "times": [
     {
@@ -1460,9 +1523,10 @@
    ]
   },
   {
-   "code": "WI1_K1_Ben",
+   "code": "WI1",
    "subject": "Wirtschaft",
    "teacher": "",
+   "teacherAbbr": "Ben",
    "room": "C305",
    "times": [
     {
